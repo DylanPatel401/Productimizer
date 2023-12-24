@@ -22,18 +22,19 @@ export default function CalendarScreen({navigation}) {
     }
  
     const goForward = (index) => {
-      setDayIndex(index)
+      
     }
  
     const goBackward = () => {
     }
+    
     return(
       <View style={{flexDirection: 'row', backgroundColor: color.secondary}}>
         {futureDays.map((day, index) => (
           <TouchableOpacity 
             style={index != dayIndex ? {backgroundColor:'#272727', flex:1, margin: 5} : {backgroundColor:color.primary, flex:1, margin: 10} } 
             key={index} 
-            onPress={ () => {goForward(index)}}
+            onPress={ () => {setDayIndex(index)}}
           >
             <View style={{alignItems: 'center', margin: 5}}>
               <Text numberOfLines={1} style={{fontFamily: 'lexend-bold',fontSize: barHeight/2, color: ['Sat', 'Sun'].includes(day) ? '#FF4949' : 'white'}}> {day} </Text>
@@ -53,16 +54,25 @@ export default function CalendarScreen({navigation}) {
       {task: 'CS homework', category: 'homework', date: '12/23/2023', time: '5:00pm', notification: '1 hour before', level: '#98FB98'}, 
       {task: 'English homework', category: 'homework', date: '12/23/2023', time: '5:00pm', notification: '1 hour before', level: '#ff9248'}, 
       {task: 'History homework', category: 'HOMEWORK', date: '12/23/2023', time: '5:00pm', notification: '1 hour before'}, 
- 
+    ]
+
+    const activity = [
+      {title: 'reading', frequency: 'daily', time: '5:00pm', notification: '1 hour before'}
     ]
     
     return(
       <ScrollView style={{flex:3}}>
+
+        {/* Tasks*/}
+        <View style={{justifyContent: 'center'}}>
+          <Text style={{fontSize: barHeight/1.25, marginTop: barHeight, fontFamily: 'lexend-bold', color:'white', textAlign: 'center'}}>
+            Tasks:
+          </Text>
+        </View>
+
         {data.map((todo, index) => (
-          <View style={{backgroundColor: color.secondary, margin: barHeight, flex: 1,flexDirection:'row' }}>
+          <View key={index} style={{backgroundColor: color.secondary, margin: barHeight, marginBottom: 0, flex: 1,flexDirection:'row' }}>
             
- 
- 
             <TouchableHighlight style={{flex:1}} onPress={()=>{ alert('Edit task or start task?')}}>
  
               <View style={{flexDirection: 'row'}}>
@@ -100,6 +110,47 @@ export default function CalendarScreen({navigation}) {
           </View>
         ))}
       
+        {/* Activity*/}
+        <View style={{justifyContent: 'center'}}>
+          <Text style={{fontSize: barHeight/1.25, marginTop: barHeight, fontFamily: 'lexend-bold', color:'white', textAlign: 'center'}}>
+            Activity:
+          </Text>
+        </View>        
+
+        {activity.map((activity, index) => (
+          <View key={index} style={{backgroundColor: color.secondary, margin: barHeight, marginBottom: 0, flex: 1,flexDirection:'row' }}>
+            
+            <TouchableHighlight style={{flex:1}} onPress={()=>{ alert('Edit Activity or start Activity?')}}>
+ 
+              <View style={{flexDirection: 'row'}}>
+                {/* Left priority color line*/}
+                <View style={{flex:1, }}>
+                  <View style={{ flex: 1,borderWidth: 2, backgroundColor: 'grey', width: '50%'}}>
+                  </View>
+                </View>  
+ 
+                {/* Middle task & time*/}
+                <View style={{flex:6,marginTop:barHeight, marginBottom: barHeight,}}>
+                  <Text style={{color:'white', fontFamily: 'lexend-bold', marginBottom: barHeight/2}}>
+                    {activity.title}
+                  </Text>              
+ 
+                  <Text style={{fontFamily: 'lexend-regular', color: '#AFAFAF'}}>
+                    {activity.time}
+                  </Text>
+                </View>             
+ 
+                       
+              </View>
+ 
+            </TouchableHighlight>
+ 
+ 
+ 
+          </View>
+        ))}
+      
+
       </ScrollView>
     );
   }
