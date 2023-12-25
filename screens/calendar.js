@@ -1,33 +1,38 @@
 import { Text, View, TouchableOpacity, StatusBar, TouchableHighlight, ScrollView} from 'react-native';
-import { useContext, useState} from 'react';
+import { useContext, useState, useEffect} from 'react';
 import { ColorContext } from '../styles/colorContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
- 
+import { taskData, activityData } from './data';
 const barHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 24;
  
- 
+function addDaysToDate(date, daysToAdd) {
+  var newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + daysToAdd);
+  return newDate;
+}
+
 export default function CalendarScreen({navigation}) {
   const color = useContext(ColorContext);
   const [dayIndex, setDayIndex] = useState(0);
-  const [displayPopup, setDisplayPopup] = useState(true);
+  const [currentDate, setDate] = useState(new Date());
  
-  const Week = () => {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const date = new Date()
-    const currentDayIndex =  date.getDay();
+  const getDayOfWeekStr = (year, month, day) => (new Date(year, month, day).toLocaleDateString('en-US', { weekday: 'short' }));
+  const goForward = () => {
+    setDate(prevDate => addDaysToDate(prevDate, 7));
+  }
  
+  const goBackward = () => {
+    setDate(prevDate => addDaysToDate(prevDate, -7));
+  }
+
+  const Week = () => { 
     const futureDays = [];
-    for (let i = currentDayIndex ; i <= currentDayIndex + 6; i++) {
-      futureDays.push(days[i % 7]);
+
+    for (let i = 0 ; i < 7; i++) {
+      const tempDate = addDaysToDate(currentDate, i); 
+      futureDays.push(getDayOfWeekStr(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate()).split(',')[0]);
     }
- 
-    const goForward = (index) => {
-      
-    }
- 
-    const goBackward = () => {
-    }
-    
+     
     return(
       <View style={{flexDirection: 'row', backgroundColor: color.secondary}}>
         {futureDays.map((day, index) => (
@@ -37,8 +42,12 @@ export default function CalendarScreen({navigation}) {
             onPress={ () => {setDayIndex(index)}}
           >
             <View style={{alignItems: 'center', margin: 5}}>
-              <Text numberOfLines={1} style={{fontFamily: 'lexend-bold',fontSize: barHeight/2, color: ['Sat', 'Sun'].includes(day) ? '#FF4949' : 'white'}}> {day} </Text>
-              <Text style={{fontSize: barHeight/2, fontFamily: 'lexend-regular', color: 'white', paddingTop: 10}}>{new Date().getDate() + (index)}</Text>
+              <Text numberOfLines={1} style={{fontFamily: 'lexend-bold',fontSize: barHeight/2, color: ['Sat', 'Sun'].includes(day) ? '#FF4949' : 'white'}}> 
+                {day} 
+              </Text>
+              <Text style={{fontSize: barHeight/2, fontFamily: 'lexend-regular', color: 'white', paddingTop: 10}}>
+                {addDaysToDate(currentDate, index).getDate()}
+              </Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -47,19 +56,7 @@ export default function CalendarScreen({navigation}) {
     );
   } 
  
-  const Todo = () => {
-    const data = [
-      {task: 'Math ', category: 'homework', date: '12/23/2023', time: '5:00pm', notification: '1 hour before', level: '#ff8282'}, 
-      {task: 'Science', category: 'homework', date: '12/23/2023', time: '5:00pm', notification: '1 hour before', level: '#fffd8d'}, 
-      {task: 'CS homework', category: 'homework', date: '12/23/2023', time: '5:00pm', notification: '1 hour before', level: '#98FB98'}, 
-      {task: 'English homework', category: 'homework', date: '12/23/2023', time: '5:00pm', notification: '1 hour before', level: '#ff9248'}, 
-      {task: 'History homework', category: 'HOMEWORK', date: '12/23/2023', time: '5:00pm', notification: '1 hour before'}, 
-    ]
-
-    const activity = [
-      {title: 'reading', frequency: 'daily', time: '5:00pm', notification: '1 hour before'}
-    ]
-    
+  const Todo = () => {    
     return(
       <ScrollView style={{flex:3}}>
 
@@ -70,7 +67,7 @@ export default function CalendarScreen({navigation}) {
           </Text>
         </View>
 
-        {data.map((todo, index) => (
+        {taskData.map((todo, index) => (
           <View key={index} style={{backgroundColor: color.secondary, margin: barHeight, marginBottom: 0, flex: 1,flexDirection:'row' }}>
             
             <TouchableHighlight style={{flex:1}} onPress={()=>{ alert('Edit task or start task?')}}>
@@ -117,7 +114,7 @@ export default function CalendarScreen({navigation}) {
           </Text>
         </View>        
 
-        {activity.map((activity, index) => (
+        {activityData.map((activity, index) => (
           <View key={index} style={{backgroundColor: color.secondary, margin: barHeight, marginBottom: 0, flex: 1,flexDirection:'row' }}>
             
             <TouchableHighlight style={{flex:1}} onPress={()=>{ alert('Edit Activity or start Activity?')}}>
@@ -139,7 +136,7 @@ export default function CalendarScreen({navigation}) {
                     {activity.time}
                   </Text>
                 </View>             
- 
+            
                        
               </View>
  
@@ -165,22 +162,22 @@ export default function CalendarScreen({navigation}) {
         <View style={{flex:1, backgroundColor: color.secondary}}>
           <View style={{flex:1, flexDirection:'row'}}>
             <View style={{flex:1, justifyContent:'center', alignItems: 'center'}}>
-              <TouchableHighlight style={{color: 'blue'}} onPress={() => {}}>
+              <TouchableHighlight style={{color: 'blue'}} onPress={() => goBackward()}>
                 <MaterialCommunityIcons name="arrow-left" color={color.primary} size={barHeight} />
               </TouchableHighlight>
             </View>
  
             <View style={{flex:2, justifyContent: 'center'}}>
               <Text style={{color: 'white', fontFamily: 'lexend-regular', textAlign: 'center', fontSize: barHeight*0.7}}>
-                {new Date().toLocaleString('default', { month: 'long' })}
+                {currentDate.toLocaleString('default', { month: 'long' })}
               </Text>
               <Text style={{color: 'white', fontFamily: 'lexend-regular', textAlign: 'center'}}>
-                {new Date().getFullYear()}
+                {currentDate.getFullYear()}
               </Text>              
             </View>
  
             <View style={{flex:1, justifyContent:'center', alignItems: 'center'}}>
-              <TouchableHighlight style={{color: 'blue'}} onPress={() => {}}>
+              <TouchableHighlight style={{color: 'blue'}} onPress={() => goForward()}>
                 <MaterialCommunityIcons name="arrow-right" color={color.primary} size={barHeight} />
               </TouchableHighlight>
             </View>
