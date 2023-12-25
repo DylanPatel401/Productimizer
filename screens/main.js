@@ -7,18 +7,30 @@ export default function MainScreen({navigation}) {
     const color = useContext(ColorContext);
 
     return (
-      <View style={{flex:3, backgroundColor: color.background}}>
-        <SafeAreaView style={{flex:2, justifyContent: 'center', alignItems: 'center', marginTop: '10%'}}>
-          <Image source={require('./../assets/Task.gif')} style={{ resizeMode: 'contain'}}/>
-        </SafeAreaView>
-        <View style={{flex:1}}>
-          <Text style={{color: 'white', textAlign: 'center', fontSize: 19, marginBottom: 15, fontFamily: 'lexend-regular'}}>
-            What do you want to do today?
-          </Text>
-          <Text style={{color: 'white', textAlign: 'center', fontSize: 14, fontFamily: 'lexend-extrabold'}}>
-            Tap + to add your tasks
-          </Text>
+      <View style={{flex:10, backgroundColor: color.background}}>
+        <View style={{flex:1, flexDirection:'row'}}>
+          <View style={{flex:1, justifyContent: 'center'}}>
+            <Text style={{color:'white', textAlign: 'center'}}>
+              Today
+            </Text>
+          </View>
+          <View style={{flex:1, justifyContent: 'center'}}>
+            <Text style={{color:'white', textAlign: 'center'}}>
+             Paste Due
+            </Text>
+          </View>
+          <View style={{flex:1, justifyContent: 'center'}}>
+            <Text style={{color:'white', textAlign: 'center'}}>
+              Completed
+            </Text>
+          </View>
+
         </View>
+
+        <View style={{flex:7}}>
+
+        </View>
+
       </View>
     );
   }
