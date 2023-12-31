@@ -1,5 +1,5 @@
 import { TextInput, Text, View, StyleSheet, TouchableHighlight, Dimensions, StatusBar, FlatList, ActivityIndicator} from 'react-native';
-import React, { Component, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
@@ -9,6 +9,9 @@ import MainScreen from './main';
 import TaskScreen from './task';
 import CalendarScreen from './calendar';
 import ProfileScreen from './profile';
+
+import { ColorContext } from '../styles/colorContext';
+import { lightScheme, darkScheme } from '../styles/style';
 
 
 var deviceHeight = Dimensions.get('window').height;
@@ -24,15 +27,12 @@ const Task = () => {return(<TaskScreen/>)}
 const Activity = () => {return(<ActivityScreen/>)}
 const Profile = () => {return(<ProfileScreen/>)}
 
-import { ColorContext } from '../styles/colorContext';
-import { lightScheme, darkScheme } from '../styles/style';
 
-const currentColorPreference = 'dark';
-const colorScheme = currentColorPreference == 'light' ? lightScheme : darkScheme;
 
 
 export default function HomeScreen({navigation}) {
     const [fontLoaded, setFontsLoaded] = useState(false);
+    const colorScheme = useContext(ColorContext);
 
     useEffect(()=> {
         async function fontz() {

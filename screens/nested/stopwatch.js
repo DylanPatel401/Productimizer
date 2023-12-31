@@ -8,11 +8,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { activityData, taskData } from '../data';
 import {LinearGradient} from 'expo-linear-gradient';
 
-const currentColorPreference = 'dark';
-import { lightScheme, darkScheme } from '../../styles/style';
-const colorScheme = currentColorPreference == 'light' ? lightScheme : darkScheme;
-
 export default function StopwatchScreen({ route, navigation }) {
+  const colorScheme = useContext(ColorContext);
   const {item_id} = route.params; 
 
   const findItemById = (itemId) => {
