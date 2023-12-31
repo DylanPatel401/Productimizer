@@ -4,7 +4,7 @@ import { StyleSheet, StatusBar} from "react-native";
 const barHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 24;
 
 const lightScheme = {
-  background: '#121212',
+  background: 'white',
   primary: '#8687E7',
   secondary: '#363636',
   text: '#333',

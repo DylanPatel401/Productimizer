@@ -9,6 +9,7 @@ import CalendarScreen from './screens/calendar';
 import MainScreen from './screens/main';
 import ProfileScreen from './screens/profile';
 import TaskScreen from './screens/task';
+import StopwatchScreen from './screens/nested/stopwatch';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ export default function App() {
         <Stack.Screen name="Main" component={MainScreen}/>
         <Stack.Screen name="Profile" component={ProfileScreen}   options={{headerShown: false}}/>
         <Stack.Screen name="Task" component={TaskScreen}   options={{headerShown: false}}/>
+        <Stack.Screen name="Stopwatch" component={StopwatchScreen}   options={{headerShown: false}}/>
 
       </Stack.Navigator>
     </NavigationContainer>

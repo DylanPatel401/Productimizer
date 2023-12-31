@@ -27,7 +27,7 @@ const Profile = () => {return(<ProfileScreen/>)}
 import { ColorContext } from '../styles/colorContext';
 import { lightScheme, darkScheme } from '../styles/style';
 
-const currentColorPreference = 'light';
+const currentColorPreference = 'dark';
 const colorScheme = currentColorPreference == 'light' ? lightScheme : darkScheme;
 
 
@@ -76,7 +76,7 @@ export default function HomeScreen({navigation}) {
                     tabBarIcon: ({color}) => (
                         <MaterialCommunityIcons name="home" color={color} size={deviceHeight/30} />
                     ), 
-                    headerShown: true,
+                    headerShown: false,
                     }}
                 />
                 <Tab.Screen name="Calendar" component={Calendar} 
@@ -88,11 +88,12 @@ export default function HomeScreen({navigation}) {
                   }}
                 />      
                 
-                <Tab.Screen name="Task" component={Task} 
+                <Tab.Screen name="Create" component={Task} 
                     options={{
                     tabBarIcon: ({color}) => (
                         <MaterialCommunityIcons name="plus-circle" color={color} size={deviceHeight/30} />
                     ), 
+                    headerShown: false,
                     }}
                 />      
                 

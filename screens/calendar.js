@@ -1,8 +1,10 @@
-import { Text, View, TouchableOpacity, StatusBar, TouchableHighlight, ScrollView, Image} from 'react-native';
+import { Text, View, TouchableOpacity, StatusBar, TouchableHighlight, ScrollView, Image, Modal, StyleSheet} from 'react-native';
 import { useContext, useState, useEffect} from 'react';
 import { ColorContext } from '../styles/colorContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { taskData, activityData } from './data';
+
+import { ActionsModal } from '../functions/components/actionsModal';
 const barHeight = StatusBar.currentHeight ? StatusBar.currentHeight : 24;
  
 function addDaysToDate(date, daysToAdd) {
@@ -13,9 +15,12 @@ function addDaysToDate(date, daysToAdd) {
 
 export default function CalendarScreen({navigation}) {
   const color = useContext(ColorContext);
+  
   const [dayIndex, setDayIndex] = useState(0);
   const [currentDate, setDate] = useState(new Date());
   const [actualDate, setActualDate] = useState(new Date());
+  const [modal, setModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState();
 
   const getDayOfWeekStr = (year, month, day) => (new Date(year, month, day).toLocaleDateString('en-US', { weekday: 'short' }));
   const goForward = () => {
@@ -96,20 +101,29 @@ export default function CalendarScreen({navigation}) {
     }
 
     const currentActivity = [];
-    for(let i = 0; i < activityData.length; i++){
-      const d = activityData[i].date.split('/');
-      const activityDate = new Date(d[2], d[0]-1, d[1], 0,0,0); 
-      
-
-      if(activityDate.getFullYear() == actualDate.getFullYear() && 
-          activityDate.getMonth() == actualDate.getMonth() &&
-          activityDate.getDate() == actualDate.getDate()){
-            currentActivity.push(activityData[i]);
-          }
+    for (let i = 0; i < activityData.length; i++) {
+      const { frequency, dates } = activityData[i];
+      if (
+        frequency.type === "daily" ||
+        (frequency.type === "weekly" &&
+          frequency.daysOfWeek.includes(actualDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase().split(',')[0])) ||
+        dates.some((date) => {
+          const d = date.split('/');
+          const activityDate = new Date(d[2], d[0] - 1, d[1], 0, 0, 0);
+          return (
+            activityDate.getFullYear() === actualDate.getFullYear() &&
+            activityDate.getMonth() === actualDate.getMonth() &&
+            activityDate.getDate() === actualDate.getDate()
+          );
+        })
+      ) {
+        currentActivity.push(activityData[i]);
+      }
     }
+    
 
     const Tasks = () => {
-      return(
+      return( 
         <View>
           <View style={{justifyContent: 'center'}}>
             <Text style={{fontSize: barHeight/1.25, marginTop: barHeight, fontFamily: 'lexend-bold', color:'white', textAlign: 'center'}}>
@@ -120,7 +134,10 @@ export default function CalendarScreen({navigation}) {
           {currentTasks.map((todo, index) => (
             <View key={index} style={{backgroundColor: color.secondary, margin: barHeight, marginBottom: 0, flex: 1,flexDirection:'row' }}>
               
-              <TouchableHighlight style={{flex:1}} onPress={()=>{ alert('Edit task or start task?')}}>
+              <TouchableHighlight style={{flex:1}} onPress={()=>{ 
+                setSelectedItem(todo.task_id)
+                setModal(true)}
+              }>
   
                 <View style={{flexDirection: 'row'}}>
                   {/* Left priority color line*/}
@@ -130,13 +147,13 @@ export default function CalendarScreen({navigation}) {
                   </View>  
   
                   {/* Middle task & time*/}
-                  <View style={{flex:3,marginTop:barHeight, marginBottom: barHeight,}}>
+                  <View style={{flex:4,marginTop:barHeight, marginBottom: barHeight,}}>
                     <Text style={{color:'white', fontFamily: 'lexend-bold', marginBottom: barHeight/2}}>
                       {todo.task}
                     </Text>              
   
                     <Text style={{fontFamily: 'lexend-regular', color: '#AFAFAF'}}>
-                      {todo.time}
+                      {new Date(`2023-12-31 ${todo.time}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
                     </Text>
                   </View>             
   
@@ -173,7 +190,9 @@ export default function CalendarScreen({navigation}) {
           {currentActivity.map((activity, index) => (
             <View key={index} style={{backgroundColor: color.secondary, margin: barHeight, marginBottom: 0, flex: 1,flexDirection:'row' }}>
               
-              <TouchableHighlight style={{flex:1}} onPress={()=>{ alert('Edit Activity or start Activity?')}}>
+              <TouchableHighlight style={{flex:1}} onPress={()=>{
+                setSelectedItem(activity.activity_id)               
+                setModal(true)}}>
   
                 <View style={{flexDirection: 'row'}}>
                   {/* Left priority color line*/}
@@ -189,7 +208,7 @@ export default function CalendarScreen({navigation}) {
                     </Text>              
   
                     <Text style={{fontFamily: 'lexend-regular', color: '#AFAFAF'}}>
-                      {activity.time}
+                      {new Date(`2023-12-31 ${activity.time}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
                     </Text>
                   </View>             
               
@@ -232,7 +251,7 @@ export default function CalendarScreen({navigation}) {
     );
   }
  
-  
+
   return (
     
       <View style={{flex:10, backgroundColor: color.background}}>
@@ -271,6 +290,9 @@ export default function CalendarScreen({navigation}) {
         <View style={{flex:3,}}>
           <Todo/>          
         </View>
+
+      
+        <ActionsModal modal={modal} setModal={setModal} item_id={selectedItem}/>
  
       </View>
     );
