@@ -71,8 +71,7 @@ export default function HomeScreen({navigation}) {
             
                 <Tab.Screen name="Main" component={Main}       
                     options={{
-                    title: 'Home',
-                    style:{margin:10},
+                    title: 'Tasks',
                     tabBarIcon: ({color}) => (
                         <MaterialCommunityIcons name="home" color={color} size={deviceHeight/30} />
                     ), 
