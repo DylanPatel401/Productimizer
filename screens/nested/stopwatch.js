@@ -1,4 +1,4 @@
-import { Text, View, ImageBackground, StyleSheet, TouchableOpacity} from 'react-native';
+import { Text, View, ImageBackground, StyleSheet, TouchableOpacity, SafeAreaView} from 'react-native';
 import { useState, useRef, useEffect} from 'react';
 import { barHeight } from '../../styles/style';
 import { ColorContext } from '../../styles/colorContext';
@@ -136,7 +136,7 @@ export default function StopwatchScreen({ route, navigation }) {
       source={getRandomImage()} // Adjust the path as needed
       style={{ flex: 10, resizeMode: 'cover', justifyContent: 'center', }}
     >
-      <View style={{ padding: barHeight, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)', flexDirection:'row'}}>
+      <View style={{ padding: barHeight, flex:1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)', flexDirection:'row'}}>
 
         <View style={{flex:1}}>
           <TouchableOpacity

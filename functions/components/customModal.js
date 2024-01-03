@@ -6,10 +6,10 @@ const CustomModal = ({ visiblility, headerText, leftBtnTxt, rightBtnTxt, leftBtn
 
   return(
     <Modal
-    visible={visiblility}
-    animationType="slide"
-    transparent={true}
-  >
+      visible={visiblility}
+      animationType="slide"
+      transparent={true}
+    >
     <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center' }}>
       <View style={{ backgroundColor: 'rgba(0,0,0,0.8)', padding: 16, borderRadius: 8, margin: 16 }}>
         <Text style={{ color: 'white', textAlign: 'center', fontSize: 18, marginBottom: 16 }}>

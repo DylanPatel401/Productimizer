@@ -28,6 +28,12 @@ export default function CalendarScreen({navigation}) {
     setDate(prevDate => addDaysToDate(prevDate, -7))
     setActualDate(addDaysToDate(currentDate, dayIndex-7))
   };
+  
+  function addDaysToDate(date, daysToAdd) {
+    var newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + daysToAdd);
+    return newDate;
+  }     
 
   const Week = () => {  
     const futureDays = [];
@@ -37,11 +43,6 @@ export default function CalendarScreen({navigation}) {
       futureDays.push(getDayOfWeekStr(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate()).split(',')[0]);
     }
 
-    function addDaysToDate(date, daysToAdd) {
-      var newDate = new Date(date);
-      newDate.setDate(newDate.getDate() + daysToAdd);
-      return newDate;
-    }     
 
     return(
       <View style={{flexDirection: 'row', backgroundColor: color.secondary}}>

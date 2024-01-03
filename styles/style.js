@@ -13,8 +13,15 @@ const darkScheme =  StyleSheet.create({
   background: '#121212',
   primary: '#8687E7',
   secondary: '#363636',
-  text: {fontFamily: 'lexend-regular', fontSize:  barHeight, color: 'white'},
+  text: {fontFamily: 'lexend-regular', fontSize:  barHeight/1.25, color: 'white'},
   smallText: {fontFamily: 'lexend-regular', fontSize:  barHeight/2, color: 'white'},
 });
 
-export {lightScheme, darkScheme, barHeight}
+const priorityLevel = {
+  none: 'grey',
+  high: '#ff8282',
+  low: '#98FB98',
+  medium: '#fffd8d'
+}
+
+export {lightScheme, darkScheme, barHeight, priorityLevel}
