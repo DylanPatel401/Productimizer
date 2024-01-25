@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "activitytracker",
-    "slug": "activitytracker",
+    "name": "Productimizer",
+    "slug": "productimizer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,22 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.dylanpatel401.productimizer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "19468f21-5c29-40b4-8cac-2085430dd81a"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/19468f21-5c29-40b4-8cac-2085430dd81a"
     }
   }
 }

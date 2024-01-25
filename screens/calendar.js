@@ -1,10 +1,9 @@
 import { Text, View, TouchableOpacity, StatusBar, TouchableHighlight, ScrollView, Image, Modal, StyleSheet} from 'react-native';
 import { useContext, useState, useEffect} from 'react';
-import { ColorContext } from '../styles/colorContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { ActionsModal } from '../functions/components/actionsModal';
-
+import { ColorContext } from '../styles/colorContext';
 import { barHeight } from '../styles/style'; 
 import { getTasks, getActivity } from '../functions/api/getToday';
 import { RenderCards } from '../functions/components/RenderCards';

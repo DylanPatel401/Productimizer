@@ -7,10 +7,39 @@ import { useContext } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { activityData, taskData } from '../data';
 import {LinearGradient} from 'expo-linear-gradient';
+import { Audio } from 'expo-av';
 
 export default function StopwatchScreen({ route, navigation }) {
   const colorScheme = useContext(ColorContext);
   const {item_id} = route.params; 
+  const [sound, setSound] = useState();
+  const [volumeOn, setVolume] = useState(false);
+
+  async function playSound() {
+    if(volumeOn){
+      setVolume(false);
+      await sound.unloadAsync();
+    }else{
+      setVolume(true);
+      console.log('Loading Sound');
+      const { sound } = await Audio.Sound.createAsync( require('./../../assets/music/audio2.mp3')
+      );
+      setSound(sound);
+
+      await sound.playAsync();      
+    }
+
+  }
+
+  
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   const findItemById = (itemId) => {
     const taskItem = taskData.find((item) => item.task_id === itemId);
@@ -160,7 +189,7 @@ export default function StopwatchScreen({ route, navigation }) {
 
         <View style={{flex:1, alignSelf: 'center'}}>
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => {playSound()}}
           >
             <View style={{alignItems: 'flex-end', marginRight: barHeight/10}}>
               <MaterialCommunityIcons
