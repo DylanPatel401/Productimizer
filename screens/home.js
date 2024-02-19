@@ -47,9 +47,9 @@ export default function HomeScreen({navigation}) {
     }, [])
     if(!fontLoaded){
         return (
-            <View style={{flex:1, margin:30}}>
-                <Text style={{fontSize: 54, textAlign: 'center'}}>
-                    LOADING!!!!!
+            <View style={{flex:1, alignContent: 'center'}}>
+                <Text style={{fontSize: 44, textAlign: 'center',}}>
+                    Loading....
                 </Text>
             </View>
           );

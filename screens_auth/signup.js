@@ -2,6 +2,7 @@ import { Text, View, TouchableOpacity, StatusBar, Button, TextInput, Image, Moda
 import { useContext, useState, useEffect} from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {getDatabase,ref,set, onValue,push} from 'firebase/database';
 
 import { FIREBASE_AUTH} from "../firebase/firebase"
 
@@ -9,8 +10,7 @@ export default function SignUpScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  
+
   const auth = FIREBASE_AUTH;
 
 
@@ -26,16 +26,19 @@ export default function SignUpScreen({navigation}) {
 
     if(password.length < 6) return alert("Password must be at least 6 characters");
 
-    setLoading(true);
     try{
       const res = await createUserWithEmailAndPassword(auth, email,password);
+
+      const db = getDatabase();
+      set(ref(db, 'users/' + res.user.uid), {
+        username: email.split('@')[0],
+        email: email,
+        color : "DARK"
+      });
       console.log(res);
     }catch(error){
       console.log(error);
-    }finally{
-      setLoading(false);
     }
-
    
   };
 
