@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect} from 'react'
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -11,21 +11,28 @@ import ProfileScreen from './screens/profile';
 import TaskScreen from './screens/task';
 import StopwatchScreen from './screens/nested/stopwatch';
 
-import SignIn from './screens_auth/signin';
-import SignUp from './screens_auth/signup';
+import AuthScreen from './screens_auth/auth';
 
 import { ColorContext } from './styles/colorContext';
 import { lightScheme, darkScheme } from './styles/style';
+import { onAuthStateChanged } from 'firebase/auth';
+import { FIREBASE_AUTH } from './firebase/firebase';
+
 
 const Stack = createStackNavigator();
 const currentColorPreference = 'dark'
 const colorScheme = currentColorPreference == 'light' ? lightScheme : darkScheme;
 
-const isSignedIn = true;
 
 export default function App() {
-
-  const AuthFlow = isSignedIn ? (
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setUser(user);
+      console.log(user);
+    })
+  }, [])
+  const AuthFlow = user ? (
     <>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Activity" component={ActivityScreen} options={{ headerShown: false }} />
@@ -37,7 +44,7 @@ export default function App() {
     </>
   ) : (
     <>
-      <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
+      <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
     </>
   );
 

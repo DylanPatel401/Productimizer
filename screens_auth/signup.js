@@ -1,53 +1,42 @@
 import { Text, View, TouchableOpacity, StatusBar, Button, TextInput, Image, Modal, StyleSheet} from 'react-native';
 import { useContext, useState, useEffect} from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
+import { FIREBASE_AUTH} from "../firebase/firebase"
 
-const bcrypt = require('bcryptjs');
-import isaac from "isaac";
-
-bcrypt.setRandomFallback((len) => {
-	const buf = new Uint8Array(len);
-
-	return buf.map(() => Math.floor(isaac.random() * 256));
-});
-
-
-export default function SignUp({navigation}) {
+export default function SignUpScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const auth = FIREBASE_AUTH;
+
 
   const handleSignUp = async () => {
     // Basic validation
     if (!email || !password || !confirmPassword) {
-      alert('Please fill in all fields');
-      return;
+      return alert('Please fill in all fields');
     }
 
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
-      return;
+      return alert('Passwords do not match');
     }
 
-    // You can add your sign-up logic here
-    console.log(`Signing up with Email: ${email}, Password: ${password}`);
-    var hashedPassword = bcrypt.hashSync(password,10);
-    console.log(hashedPassword);
+    if(password.length < 6) return alert("Password must be at least 6 characters");
 
-    const sendData = async () => {
-      try{
-        console.log('sending data...');
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    
-    // Call the function
-    sendData();
-    
+    setLoading(true);
+    try{
+      const res = await createUserWithEmailAndPassword(auth, email,password);
+      console.log(res);
+    }catch(error){
+      console.log(error);
+    }finally{
+      setLoading(false);
+    }
 
-    // Add further logic like API calls, validation, etc.
+   
   };
 
   return (

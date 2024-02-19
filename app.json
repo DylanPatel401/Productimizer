@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dylanpatel401.productimizer"
     },
     "android": {
       "adaptiveIcon": {
@@ -37,6 +38,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/19468f21-5c29-40b4-8cac-2085430dd81a"
-    }
+    },
+    "owner": "dylanpatel401"
   }
 }
