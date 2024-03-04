@@ -1,10 +1,10 @@
-import { Text, View, StyleSheet, TextInput, KeyboardAvoidingView, SafeAreaView, TouchableOpacity} from 'react-native';
+import { Text, View, StyleSheet, TextInput, KeyboardAvoidingView, SafeAreaView, TouchableOpacity, TouchableHighlight} from 'react-native';
 import { useContext, useState} from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { ColorContext } from '../../../styles/colorContext';
 import { barHeight, priorityLevel} from '../../../styles/style';
-import { Title, Priority } from '../../../functions/components/createTasksModal';
+import { Title, Priority, Category} from '../../../functions/components/createTasksModal';
 
 
 export default function NewTaskScreen({navigation}) {
@@ -12,17 +12,28 @@ export default function NewTaskScreen({navigation}) {
   const logoColor = scheme.primary 
   const logoSize = barHeight*1;
   const [title, changeTitle] = useState();
-  const [selectedPriority, setPriority] = useState("none");
-  const [modalOnScreen, setModalOnScreen] = useState(false);
 
+  const [priorityText, setPriorityText] = useState('None');
+  const [categoryText, setCategoryText] = useState('None');
+  const [priorityModal, setPriorityModal] = useState(false); 
+  const [categoryModal, setCategoryModal] = useState(false);
+  
   const handlePrioritySelect = (priority) => {
-    setPriority(priority);
+    console.log('Priority press');
+    setPriorityText(priority);
+    setPriorityModal(false);
   };
 
-    return (
-      <View style={{flex:2, backgroundColor: scheme.background}}>
+  const handleCategorySelect = (category) => {
+    console.log('Category press');
+    setCategoryText(category);
+    setCategoryModal(false);
+  };
 
-        <View style={{flex:1}}>
+  return (
+    <View style={{flex:2, backgroundColor: scheme.background}}>
+
+      <View style={{flex:1}}>
 
           <View style={[styles.style]}>
             <View style={{justifyContent:'center', marginRight: barHeight}}>
@@ -76,6 +87,23 @@ export default function NewTaskScreen({navigation}) {
                 Category:
               </Text>          
             </View>
+
+            <TouchableOpacity
+              style={{flex:1, borderWidth: 3, borderColor: 'grey', borderRadius: barHeight/2}}
+              onPress={() => setCategoryModal(true)}
+            >
+              <View style={{flex:1, justifyContent: 'center', flexDirection: 'row'}}>
+                <View style={{backgroundColor:'white' , flex:1}}/>
+
+                <View style={{flex:9, justifyContent: 'center'}}>
+                  <Text style={[scheme.text, {textAlign: 'right', paddingRight: barHeight/2}]}>
+                    {categoryText ? categoryText : 'None'} 
+                  </Text>
+                  <Category categoryModal={categoryModal} setCategoryModal={setCategoryModal} handleCategorySelect={handleCategorySelect}/>                
+                </View>
+
+              </View>              
+            </TouchableOpacity>
           </View>
 
           <View style={styles.style}>
@@ -92,16 +120,16 @@ export default function NewTaskScreen({navigation}) {
 
             <TouchableOpacity
               style={{flex:1, borderWidth: 3, borderColor: 'grey', borderRadius: barHeight/2}}
-              onPress={() => setModalOnScreen(true)}
+              onPress={() => setPriorityModal(true)}
             >
               <View style={{flex:1, justifyContent: 'center', flexDirection: 'row'}}>
-                <View style={{backgroundColor:priorityLevel[selectedPriority] , flex:1}}/>
+                <View style={{backgroundColor:priorityLevel[priorityText] , flex:1}}/>
 
                 <View style={{flex:9, justifyContent: 'center'}}>
                   <Text style={[scheme.text, {textAlign: 'right', paddingRight: barHeight/2}]}>
-                    {selectedPriority ? selectedPriority : 'None'} 
+                    {priorityText ? priorityText : 'None'} 
                   </Text>
-                  <Priority modalOnScreen={modalOnScreen} setModalOnScreen={setModalOnScreen} handlePrioritySelect={handlePrioritySelect} />                  
+                  <Priority priorityModal={priorityModal} setPriorityModal={setPriorityModal} handlePrioritySelect={handlePrioritySelect} />
                 </View>
 
               </View>              
@@ -121,13 +149,23 @@ export default function NewTaskScreen({navigation}) {
             </View>
           </View>
 
+          <View style={styles.style}>
+            <TouchableHighlight
+              style={{flex:1, backgroundColor:scheme.primary}}
+              onPress={() => alert('true')}
+            >
+              <View style={{flex:1, justifyContent: 'center'}}>
+                <Text style={[scheme.text, {textAlign: 'center'}]}>
+                  Add task
+                </Text>
+              </View>              
+            </TouchableHighlight>
+          </View>
         </View>
 
-        <View style={{flex:0, backgroundColor: 'yellow'}}>
 
-        </View>
       </View>
-    );
+  );
 }
   
 const styles = StyleSheet.create({

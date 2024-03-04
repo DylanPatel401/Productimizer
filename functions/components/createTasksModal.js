@@ -1,8 +1,9 @@
-import { Modal, Text, View, TouchableOpacity, TextInput, StyleSheet} from 'react-native';
+import { Modal, Text, View, TouchableOpacity, TextInput, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
 import { barHeight, priorityLevel} from './../../styles/style.js';
 
 import { useContext, useState } from 'react';
 import { ColorContext } from './../../styles/colorContext.js';
+import {CloseModalButton} from './closeModalButton.js';
 
 const Title = ({visiblility}) => {
   const scheme = useContext(ColorContext);
@@ -36,16 +37,18 @@ const Title = ({visiblility}) => {
   );
 }
 
-const Priority = ({modalOnScreen, setModalOnScreen, handlePrioritySelect}) => {
+const Priority= ({priorityModal, setPriorityModal, handlePrioritySelect}) => {
+  const scheme = useContext(ColorContext);
 
   const buttonPress = (level) => {
-    setModalOnScreen(false);
-    handlePrioritySelect(level)
+    setPriorityModal(false);
+    handlePrioritySelect(level);
+    console.log(priorityModal + " --<");
   }
 
   return(
     <Modal
-      visible={modalOnScreen}
+      visible={priorityModal}
       animationType="slide"
       transparent={true}
     >
@@ -68,9 +71,9 @@ const Priority = ({modalOnScreen, setModalOnScreen, handlePrioritySelect}) => {
                   None 
                 </Text>                
               </View>
-            </TouchableOpacity>
+          </TouchableOpacity>
 
-            <TouchableOpacity
+          <TouchableOpacity
               style={[styles.modalButton, {backgroundColor: 'rgba(255,255,255,0.3)', borderColor: priorityLevel.low}]}            
               onPress={() => buttonPress("low")}
             >
@@ -79,9 +82,9 @@ const Priority = ({modalOnScreen, setModalOnScreen, handlePrioritySelect}) => {
                   low 
                 </Text>                
               </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
+          </TouchableOpacity>
+        
+          <TouchableOpacity
               style={[styles.modalButton, {backgroundColor: 'rgba(255,255,255,0.3)', borderColor: priorityLevel.medium}]}            
               onPress={() => buttonPress("medium")}
               >
@@ -90,10 +93,9 @@ const Priority = ({modalOnScreen, setModalOnScreen, handlePrioritySelect}) => {
                   medium 
                 </Text>                
               </View>
-            </TouchableOpacity>
+          </TouchableOpacity>
 
-
-            <TouchableOpacity
+          <TouchableOpacity
               style={[styles.modalButton, {backgroundColor: 'rgba(255,255,255,0.3)', borderColor: priorityLevel.high}]}            
               onPress={() => buttonPress("high")}
               >
@@ -102,7 +104,7 @@ const Priority = ({modalOnScreen, setModalOnScreen, handlePrioritySelect}) => {
                   High 
                 </Text>                
               </View>
-            </TouchableOpacity>
+          </TouchableOpacity>
         </View>
 
         <View style={{flex:1}}/>
@@ -110,10 +112,95 @@ const Priority = ({modalOnScreen, setModalOnScreen, handlePrioritySelect}) => {
     </Modal>      
   )
 }
+
+const Category = ({categoryModal, setCategoryModal, handleCategorySelect}) => {
+
+  const scheme = useContext(ColorContext);
+
+  const categoryData = [
+    {name: "Work", color: 'blue'}, 
+    {name: "Study", color: 'green'}, 
+    {name: "Health & Fitness", color: 'red'}, 
+    {name: "Household", color: 'orange'},
+    {name: "Social", color: 'purple'}, 
+    {name: "Personal Development", color: 'teal'},
+    {name: "Finance", color: 'yellow'}, 
+    {name: "Hobbies", color: 'pink'},
+    {name: "Travel", color: 'cyan'}, 
+    {name: "Volunteering", color: 'lime'},
+  ];
+  
+
+  const categoryPress = (categoryText) => {
+    setCategoryModal(false);
+    handleCategorySelect(categoryText);
+    console.log(categoryModal + " < ");
+  }
+
+  return(
+    <Modal
+      visible={categoryModal}
+      animationType='slide'
+      transparent={true}
+    >
+    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', }}>
+
+      <View style={{flex:1}}/>
+
+
+      <View style={{flex:3}}>
+        <View style={{paddingTop: 10, marginRight: barHeight*2+30, justifyContent: 'flex-end', alignSelf:'flex-end'}}>
+          <CloseModalButton setCategoryModal={setCategoryModal}/>
+        </View>
+
+        <View style={{ flex:1, borderColor: 'white', borderWidth:1,backgroundColor: 'rgba(0,0,0,0.8)', paddingTop: barHeight, paddingLeft: barHeight, paddingBottom: barHeight, paddingRight: barHeight, borderRadius: barHeight/2, alignSelf:'center'}}>        
+
+          <View style={{borderBottomWidth:3, borderColor:'white', marginBottom:barHeight, marginLeft: barHeight, marginRight: barHeight}}>
+
+            <Text style={{ color: 'white', textAlign: 'center', fontSize: barHeight/1.5, marginBottom: barHeight/1.5, fontFamily: 'lexend-extrabold'}}>
+              Choose an Category
+            </Text>            
+          
+          </View>
+            
+          <ScrollView style={{borderWidth:3,}}>
+            {categoryData.map((cat) => {
+              return(
+                <View style={{}} key={cat.name}>
+                  <TouchableHighlight
+                    style={[styles.modalButton, {backgroundColor: 'rgba(255,255,255,0.3)', borderColor:cat.color}]}            
+                    onPress={() => categoryPress(cat.name)}
+                  >
+                    <View style={[styles.modalView, {flex:3}]}>
+                      <Text style={styles.modalText}>
+                        {cat.name}
+                      </Text>                
+                    </View>
+                  </TouchableHighlight>
+
+                </View>
+              )
+            })}
+
+      </ScrollView>
+
+
+        </View>        
+      </View>
+
+
+      <View style={{flex:1}}/>
+
+    </View>
+  </Modal>
+  );
+}
+
 const styles = StyleSheet.create({
-  modalView: {  flex: 1, justifyContent:'center', alignContent:'center', borderRadius:4},
+  style: {flexDirection: 'row', margin: barHeight},
+  modalView: {  justifyContent:'center', alignContent:'center', borderRadius:4},
   modalText: { textAlign: 'center', color: 'white', fontSize: barHeight/1.5, fontFamily: 'lexend-bold'},
   modalButton: {borderRadius: barHeight/3, borderLeftWidth: 10, flex:1, marginTop:barHeight/2, backgroundColor: 'rgba(255,255,255,0.3)'},
 })
 
-export {Title, Priority}
+export {Title, Priority, Category}
