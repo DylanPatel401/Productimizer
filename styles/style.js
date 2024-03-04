@@ -23,5 +23,16 @@ const priorityLevel = {
   low: '#98FB98',
   medium: '#fffd8d'
 }
-
-export {lightScheme, darkScheme, barHeight, priorityLevel}
+const categoryData = [
+  {name: "Work", color: 'blue'}, 
+  {name: "Study", color: 'green'}, 
+  {name: "Health & Fitness", color: 'red'}, 
+  {name: "Household", color: 'orange'},
+  {name: "Social", color: 'purple'}, 
+  {name: "Personal Development", color: 'teal'},
+  {name: "Finance", color: 'yellow'}, 
+  {name: "Hobbies", color: 'pink'},
+  {name: "Travel", color: 'cyan'}, 
+  {name: "Volunteering", color: 'lime'},
+];
+export {lightScheme, darkScheme, barHeight, priorityLevel, categoryData}

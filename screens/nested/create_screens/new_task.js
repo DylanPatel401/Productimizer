@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ColorContext } from '../../../styles/colorContext';
 import { barHeight, priorityLevel} from '../../../styles/style';
 import { Title, Priority, Category} from '../../../functions/components/createTasksModal';
-
+import { categoryData } from '../../../styles/style';
 
 export default function NewTaskScreen({navigation}) {
   const scheme = useContext(ColorContext);
@@ -93,7 +93,7 @@ export default function NewTaskScreen({navigation}) {
               onPress={() => setCategoryModal(true)}
             >
               <View style={{flex:1, justifyContent: 'center', flexDirection: 'row'}}>
-                <View style={{backgroundColor:'white' , flex:1}}/>
+                <View style={{ backgroundColor: categoryData.find(cat => cat.name === categoryText)?.color || 'grey', flex: 1 }} />
 
                 <View style={{flex:9, justifyContent: 'center'}}>
                   <Text style={[scheme.text, {textAlign: 'right', paddingRight: barHeight/2}]}>
@@ -123,7 +123,7 @@ export default function NewTaskScreen({navigation}) {
               onPress={() => setPriorityModal(true)}
             >
               <View style={{flex:1, justifyContent: 'center', flexDirection: 'row'}}>
-                <View style={{backgroundColor:priorityLevel[priorityText] , flex:1}}/>
+                <View style={{backgroundColor:priorityLevel[priorityText] ? priorityLevel[priorityText] : 'grey' , flex:1}}/>
 
                 <View style={{flex:9, justifyContent: 'center'}}>
                   <Text style={[scheme.text, {textAlign: 'right', paddingRight: barHeight/2}]}>

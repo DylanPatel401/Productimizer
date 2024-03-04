@@ -4,7 +4,7 @@ import { barHeight, priorityLevel} from './../../styles/style.js';
 import { useContext, useState } from 'react';
 import { ColorContext } from './../../styles/colorContext.js';
 import {CloseModalButton} from './closeModalButton.js';
-
+import { categoryData } from './../../styles/style.js';
 const Title = ({visiblility}) => {
   const scheme = useContext(ColorContext);
   const [title, changeTitle] = useState();
@@ -116,19 +116,6 @@ const Priority= ({priorityModal, setPriorityModal, handlePrioritySelect}) => {
 const Category = ({categoryModal, setCategoryModal, handleCategorySelect}) => {
 
   const scheme = useContext(ColorContext);
-
-  const categoryData = [
-    {name: "Work", color: 'blue'}, 
-    {name: "Study", color: 'green'}, 
-    {name: "Health & Fitness", color: 'red'}, 
-    {name: "Household", color: 'orange'},
-    {name: "Social", color: 'purple'}, 
-    {name: "Personal Development", color: 'teal'},
-    {name: "Finance", color: 'yellow'}, 
-    {name: "Hobbies", color: 'pink'},
-    {name: "Travel", color: 'cyan'}, 
-    {name: "Volunteering", color: 'lime'},
-  ];
   
 
   const categoryPress = (categoryText) => {
@@ -163,7 +150,7 @@ const Category = ({categoryModal, setCategoryModal, handleCategorySelect}) => {
           
           </View>
             
-          <ScrollView style={{borderWidth:3,}}>
+          <ScrollView style={{flex:1,borderWidth:3, margin:barHeight/2}}>
             {categoryData.map((cat) => {
               return(
                 <View style={{}} key={cat.name}>
@@ -171,7 +158,7 @@ const Category = ({categoryModal, setCategoryModal, handleCategorySelect}) => {
                     style={[styles.modalButton, {backgroundColor: 'rgba(255,255,255,0.3)', borderColor:cat.color}]}            
                     onPress={() => categoryPress(cat.name)}
                   >
-                    <View style={[styles.modalView, {flex:3}]}>
+                    <View style={[styles.modalView, {height:50,}]}>
                       <Text style={styles.modalText}>
                         {cat.name}
                       </Text>                
@@ -180,7 +167,8 @@ const Category = ({categoryModal, setCategoryModal, handleCategorySelect}) => {
 
                 </View>
               )
-            })}
+            })
+            }
 
       </ScrollView>
 
@@ -198,7 +186,7 @@ const Category = ({categoryModal, setCategoryModal, handleCategorySelect}) => {
 
 const styles = StyleSheet.create({
   style: {flexDirection: 'row', margin: barHeight},
-  modalView: {  justifyContent:'center', alignContent:'center', borderRadius:4},
+  modalView: {  flex:1,justifyContent:'center', alignContent:'center', borderRadius:4},
   modalText: { textAlign: 'center', color: 'white', fontSize: barHeight/1.5, fontFamily: 'lexend-bold'},
   modalButton: {borderRadius: barHeight/3, borderLeftWidth: 10, flex:1, marginTop:barHeight/2, backgroundColor: 'rgba(255,255,255,0.3)'},
 })
