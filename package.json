@@ -9,6 +9,13 @@
     "web": "expo start --web",
     "test": "jest"
   },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|firebase|firebase/app|@firebase|@firebase/app|@react-native-async-storage/async-storage)"
+    ],
+    "setupFiles": ["./setup-tests.js"]
+  },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^19.0.0",
