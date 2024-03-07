@@ -28,15 +28,20 @@ export default function SignUpScreen({navigation}) {
 
     try{
       const res = await createUserWithEmailAndPassword(auth, email,password);
+//  {task_id: 301, task: 'CS home', category: 'homework', date: '12/31/2023', time: '17:00',
+// completed_at: null, notification: '1 hour before', level: '#98FB98'}, 
 
       const db = getDatabase();
       set(ref(db, 'users/' + res.user.uid), {
         username: email.split('@')[0],
+        tasks: [{task_id: 301, task: 'CS home', category: 'homework', date: '12/31/2023', time: '17:00',
+        completed_at: null, notification: '1 hour before', level: '#98FB98'}],
         email: email,
         color : "DARK"
       });
       console.log(res);
     }catch(error){
+      alert(error)
       console.log(error);
     }
    

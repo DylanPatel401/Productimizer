@@ -23,6 +23,7 @@ export default function SignInScreen({navigation}) {
       const res = await signInWithEmailAndPassword(auth, email,password);
       console.log(res);
     }catch(error){
+      alert(error)
       console.log(error);
     }finally{
       setLoading(false);

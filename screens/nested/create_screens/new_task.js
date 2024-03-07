@@ -4,8 +4,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { ColorContext } from '../../../styles/colorContext';
 import { barHeight, priorityLevel} from '../../../styles/style';
-import { Title, Priority, Category} from '../../../functions/components/createTasksModal';
+import { Title, Priority, Category, DatePickerModal, TimePickerModal} from '../../../functions/components/createTasksModal';
 import { categoryData } from '../../../styles/style';
+import { getFormatedDate } from "react-native-modern-datepicker";
 
 export default function NewTaskScreen({navigation}) {
   const scheme = useContext(ColorContext);
@@ -13,10 +14,22 @@ export default function NewTaskScreen({navigation}) {
   const logoSize = barHeight*1;
   const [title, changeTitle] = useState();
 
+  const today = new Date();
+  const startDate = getFormatedDate(
+    today.setDate(today.getDate()),
+    "YYYY/MM/DD"
+  );
+
   const [priorityText, setPriorityText] = useState('None');
   const [categoryText, setCategoryText] = useState('None');
+  const [currentDate, setCurrentDate] = useState(startDate);
+  const [currentTime, setCurrentTime] = useState('None');
+
+
   const [priorityModal, setPriorityModal] = useState(false); 
   const [categoryModal, setCategoryModal] = useState(false);
+  const [dateModal, setDateModal] = useState(false);
+  const [timeModal, setTimeModal] = useState(false);
   
   const handlePrioritySelect = (priority) => {
     console.log('Priority press');
@@ -30,6 +43,22 @@ export default function NewTaskScreen({navigation}) {
     setCategoryModal(false);
   };
 
+  const handleDateSelect = (date) => {
+    console.log('date press');
+    setCurrentDate(date);
+    setDateModal(false);
+  }
+
+  const handleTimeSelect = (time) => {
+    console.log('time press');
+    setCurrentTime(time);
+    setTimeModal(false);
+  }
+
+  const addTask = () => {
+    console.log(`title: ${title} \nDate: ${currentDate} \n Time: ${currentTime} \n Category: ${categoryText}\nPriority: ${priorityText}`);
+
+  }
   return (
     <View style={{flex:2, backgroundColor: scheme.background}}>
 
@@ -43,7 +72,7 @@ export default function NewTaskScreen({navigation}) {
             <View style={{flex:1, justifyContent: 'center'}}>
               <TextInput
                 style={[scheme.text, {borderWidth: 2, borderRadius:10, paddingLeft: 15, borderColor:'grey', flex:1}]}
-                changeTitle={changeTitle}
+                onChangeText={changeTitle}
                 value={title}
                 placeholder={'Title..'}
                 placeholderTextColor={'white'}
@@ -62,6 +91,23 @@ export default function NewTaskScreen({navigation}) {
                 Date:
               </Text>          
             </View>
+
+            <TouchableOpacity
+              style={{flex:1, borderWidth: 3, borderColor: 'grey', borderRadius: barHeight/2}}
+              onPress={() => setDateModal(true)}
+            >
+              <View style={{flex:1, justifyContent: 'center', flexDirection: 'row'}}>
+
+                <View style={{flex:9, justifyContent: 'center'}}>
+                  <Text style={[scheme.text, {textAlign: 'right', paddingRight: barHeight/2}]}>
+                    {currentDate}
+                  </Text>
+                  <DatePickerModal dateModal={dateModal} setDateModal={setDateModal} handleDateSelect={handleDateSelect}/>                
+
+                </View>
+
+              </View>              
+            </TouchableOpacity>
           </View>
 
           <View style={styles.style}>
@@ -74,6 +120,23 @@ export default function NewTaskScreen({navigation}) {
                 Time:
               </Text>          
             </View>
+
+            <TouchableOpacity
+              style={{flex:1, borderWidth: 3, borderColor: 'grey', borderRadius: barHeight/2}}
+              onPress={() => setTimeModal(true)}
+            >
+              <View style={{flex:1, justifyContent: 'center', flexDirection: 'row'}}>
+
+                <View style={{flex:9, justifyContent: 'center'}}>
+                  <Text style={[scheme.text, {textAlign: 'right', paddingRight: barHeight/2}]}>
+                    {currentTime}
+                  </Text>
+                  <TimePickerModal timeModal={timeModal} setTimeModal={setTimeModal} handleTimeSelect={handleTimeSelect}/>                
+
+                </View>
+
+              </View>              
+            </TouchableOpacity>
           </View>
 
 
@@ -137,7 +200,7 @@ export default function NewTaskScreen({navigation}) {
 
           </View>
 
-          <View style={styles.style}>
+          {/*<View style={styles.style}>
             <View style={{justifyContent:'center', marginRight: barHeight}}>
               <MaterialCommunityIcons name="professional-hexagon" color={logoColor} size={logoSize} />
             </View>
@@ -147,12 +210,12 @@ export default function NewTaskScreen({navigation}) {
                 Productivity:
               </Text>          
             </View>
-          </View>
+          </View>*/}
 
           <View style={styles.style}>
             <TouchableHighlight
               style={{flex:1, backgroundColor:scheme.primary}}
-              onPress={() => alert('true')}
+              onPress={addTask}
             >
               <View style={{flex:1, justifyContent: 'center'}}>
                 <Text style={[scheme.text, {textAlign: 'center'}]}>

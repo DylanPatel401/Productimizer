@@ -14,6 +14,8 @@ import StopwatchScreen from './screens/nested/stopwatch';
 import AuthScreen from './screens_auth/auth';
 
 import { ColorContext } from './styles/colorContext';
+
+
 import { lightScheme, darkScheme } from './styles/style';
 import { onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './firebase/firebase';
@@ -33,7 +35,7 @@ export default function App() {
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
-      setUid(user?.uid);
+      //setUid(user?.uid);
       console.log(user);
     })
   }, [])

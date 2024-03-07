@@ -7,6 +7,7 @@ const lightScheme = StyleSheet.create({
   background: 'white',
   primary: '#8687E7',
   secondary: '#363636',
+  uid: "NKoRsj1CoPMDCfKo9DY5nlxFtF23"
 });
   
 const darkScheme =  StyleSheet.create({
@@ -15,6 +16,7 @@ const darkScheme =  StyleSheet.create({
   secondary: '#363636',
   text: {fontFamily: 'lexend-regular', fontSize:  barHeight/1.25, color: 'white'},
   smallText: {fontFamily: 'lexend-regular', fontSize:  barHeight/2, color: 'white'},
+  uid: "NKoRsj1CoPMDCfKo9DY5nlxFtF23"
 });
 
 const priorityLevel = {
