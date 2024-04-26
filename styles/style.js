@@ -20,7 +20,7 @@ const darkScheme =  StyleSheet.create({
 });
 
 const priorityLevel = {
-  none: 'grey',
+  None: 'grey',
   high: '#ff8282',
   low: '#98FB98',
   medium: '#fffd8d'

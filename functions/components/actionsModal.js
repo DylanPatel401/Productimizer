@@ -5,8 +5,16 @@ import { useNavigation } from '@react-navigation/native';
 
 import { barHeight } from '../../styles/style';
 
+import { deleteTask, updateTaskCompletion } from '../../firebase/tasksActions';
+
 const ActionsModal = ({modal, setModal, item_id}) => {
   const navigation = useNavigation();
+
+  console.log(item_id)
+  const markAsDone = async() => {
+    await updateTaskCompletion(item_id)
+    setModal(false);
+  }
 
   return(
     <Modal
@@ -57,7 +65,7 @@ const ActionsModal = ({modal, setModal, item_id}) => {
         
           <TouchableOpacity
             style={[styles.modalActionButton, {backgroundColor: '#30c7c4'}]}
-            onPress={() => {setModal(false)}}
+            onPress={markAsDone}
           >
             <View style={styles.modalActionView}>
               <Text style={styles.modalActionText}>

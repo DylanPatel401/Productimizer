@@ -1,21 +1,48 @@
-import { View} from 'react-native';
-import { useContext } from 'react';
+import { View, Text} from 'react-native';
+import { useContext, useEffect, useState} from 'react';
 import { ColorContext } from '../../../styles/colorContext';
 
-// gets the data, conidtions: date = today
-import { getTasks } from '../../../functions/api/getPast';
 import { RenderCards } from '../../../functions/components/RenderCards';
+import { getPastTasks } from '../../../firebase/tasksActions';
+import { FIREBASE_AUTH } from '../../../firebase/firebase';
 
 export default function PastdueScreen({navigation}) {
   const scheme = useContext(ColorContext);
-  const currentTasks = getTasks(new Date());
-  // I don't want to display activities on past due screen.
-  const currentActivity = []
+  const [currentTasks, setCurrentTasks] = useState([]);
+  const [loading, setLoading] = useState(true)
 
-    return (
-      <View style={{flex:1,backgroundColor: scheme.background}}>
-        <RenderCards currentActivity={currentActivity} currentTasks={currentTasks} renderDate={true}/>
-      </View>
-    );
-  }
+  useEffect(() => {
+    async function today(){ 
+      const data = await getPastTasks(FIREBASE_AUTH.currentUser.uid);
+      setCurrentTasks(data);      
+    }
+
+    today();
+    setLoading(false);
+  }, [])
+
+  return (
+    <View style={{flex:1,backgroundColor: scheme.background}}>
+
+      {loading == true ? (
+        <View style={{flex:1}}>
+          <Text style={{ textAlign: 'center', fontFamily: 'lexend-regular', fontSize:34, color:'white'}}>
+            Loading...
+          </Text>
+        </View>
+      ) : (
+        currentTasks.length == 0 ? (
+          <View style={{flex:1, justifyContent: 'center'}}>
+            <Text style={{color:'white', textAlign: 'center', fontFamily: 'lexend-bold', fontSize:22}}>
+              None (:
+            </Text>
+          </View>
+        ) : (
+          <RenderCards currentTasks={currentTasks}/>
+        )
+      )}
+
+    </View>
+  );
+}
   

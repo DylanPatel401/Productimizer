@@ -1,38 +1,38 @@
 import { View, Text, ScrollView, TouchableHighlight, TouchableOpacity,} from 'react-native';
 import { useContext, useState, useEffect } from 'react';
 
-import { barHeight } from '../../styles/style';
+import { barHeight, priorityLevel} from '../../styles/style';
 import { ColorContext } from '../../styles/colorContext';
 import { ActionsModal } from './actionsModal';
 import { NoData } from './NoData';
 
-export const RenderCards = ({currentTasks, currentActivity, renderDate}) => {    
+export const RenderCards = ({currentTasks, renderDate}) => {    
   const color = useContext(ColorContext);
   
   const [modal, setModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState();
 
-  const Tasks = () => {
+  const Tasks = () => {   
     return( 
       <View>
         <View style={{justifyContent: 'center'}}>
           <Text style={{fontSize: barHeight/1.25, marginTop: barHeight, fontFamily: 'lexend-bold', color:'white', textAlign: 'center'}}>
             Tasks:
-          </Text>
+          </Text> 
         </View>
 
         {currentTasks.map((todo, index) => (
           <View key={index} style={{backgroundColor: color.secondary, margin: barHeight, marginBottom: 0, flex: 1,flexDirection:'row' }}>
             
             <TouchableHighlight style={{flex:1}} onPress={()=>{ 
-              setSelectedItem(todo.task_id)
+              setSelectedItem(todo.taskID)
               setModal(true)}
             }>
 
               <View style={{flexDirection: 'row'}}>
                 {/* Left priority color line*/}
                 <View style={{flex:1, }}>
-                  <View style={{ flex: 1,borderWidth: 2, backgroundColor: todo.level ? todo.level : 'grey', width: '50%'}}>
+                  <View style={{ flex: 1,borderWidth: 2, backgroundColor: priorityLevel[todo.priority] , width: '50%'}}>
                   </View>
                 </View>  
 
@@ -45,19 +45,19 @@ export const RenderCards = ({currentTasks, currentActivity, renderDate}) => {
                   <View style={{flexDirection: 'row'}}>
                     <View style={{flex:1}}>
                       <Text style={{fontFamily: 'lexend-regular', color: '#AFAFAF'}}>
-                        {new Date(`2023-12-31 ${todo.time}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
-                      </Text>                      
+                        {todo.time.toLowerCase() === 'none' ? 'Today' : new Date(`2023-12-31T${todo.time}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
+                      </Text>                        
                     </View>
 
-                    {
+                    { 
                       renderDate == true  ?                    
                       (
                         <Text style={{fontFamily: 'lexend-regular', color: '#AFAFAF'}}>
-                          {(todo.date)}
+                          {(todo.date)} gt
                         </Text>      
                       ) : null
                     }
-              
+
                   </View>
 
                   

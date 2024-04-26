@@ -8,6 +8,9 @@ import { Title, Priority, Category, DatePickerModal, TimePickerModal} from '../.
 import { categoryData } from '../../../styles/style';
 import { getFormatedDate } from "react-native-modern-datepicker";
 
+import { createTask } from '../../../firebase/tasksActions';
+import { FIREBASE_AUTH } from '../../../firebase/firebase';
+
 export default function NewTaskScreen({navigation}) {
   const scheme = useContext(ColorContext);
   const logoColor = scheme.primary 
@@ -54,10 +57,10 @@ export default function NewTaskScreen({navigation}) {
     setCurrentTime(time);
     setTimeModal(false);
   }
-
-  const addTask = () => {
+  
+  async function addTask () {
     console.log(`title: ${title} \nDate: ${currentDate} \n Time: ${currentTime} \n Category: ${categoryText}\nPriority: ${priorityText}`);
-
+    await createTask({uid:FIREBASE_AUTH.currentUser.uid, title:title, date:currentDate, time:currentTime, category:categoryText, priority: priorityText})
   }
   return (
     <View style={{flex:2, backgroundColor: scheme.background}}>
@@ -200,17 +203,6 @@ export default function NewTaskScreen({navigation}) {
 
           </View>
 
-          {/*<View style={styles.style}>
-            <View style={{justifyContent:'center', marginRight: barHeight}}>
-              <MaterialCommunityIcons name="professional-hexagon" color={logoColor} size={logoSize} />
-            </View>
-
-            <View style={{flex:1, justifyContent: 'center'}}>
-              <Text style={[scheme.text ]}>
-                Productivity:
-              </Text>          
-            </View>
-          </View>*/}
 
           <View style={styles.style}>
             <TouchableHighlight
