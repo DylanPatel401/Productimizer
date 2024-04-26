@@ -105,7 +105,7 @@ export default function CalendarScreen({navigation}) {
         </View>
     
         <View style={{flex:3,}}>
-          <RenderCards currentTasks={getTasks(actualDate)} currentActivity={getActivity(actualDate)}/>
+          <RenderCards currentTasks={getTasks(actualDate)}/>
         </View>
 
       

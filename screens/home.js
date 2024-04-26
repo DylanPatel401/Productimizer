@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 
-import ActivityScreen from './activity';
 import MainScreen from './main';
 import TaskScreen from './task';
 import CalendarScreen from './calendar';
@@ -93,14 +92,6 @@ export default function HomeScreen({navigation}) {
                         <MaterialCommunityIcons name="plus-circle" color={color} size={deviceHeight/30} />
                     ), 
                     headerShown: false,
-                    }}
-                />      
-                
-                <Tab.Screen name="Activity" component={Activity} 
-                    options={{
-                    tabBarIcon: ({color}) => (
-                        <MaterialCommunityIcons name="run-fast" color={color} size={deviceHeight/30} />
-                    ), 
                     }}
                 />      
 

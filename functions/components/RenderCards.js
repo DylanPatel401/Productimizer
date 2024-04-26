@@ -85,52 +85,6 @@ export const RenderCards = ({currentTasks, currentActivity, renderDate}) => {
     );
   }
 
-  const Activity = () => {
-    return (
-      <View>
-        <View style={{justifyContent: 'center'}}>
-          <Text style={{fontSize: barHeight/1.25, marginTop: barHeight, fontFamily: 'lexend-bold', color:'white', textAlign: 'center'}}>
-            Activity:
-          </Text>
-        </View>        
-
-        {currentActivity.map((activity, index) => (
-          <View key={index} style={{backgroundColor: color.secondary, margin: barHeight, marginBottom: 0, flex: 1,flexDirection:'row' }}>
-            
-            <TouchableHighlight style={{flex:1}} onPress={()=>{
-              setSelectedItem(activity.activity_id)               
-              setModal(true)}}>
-
-              <View style={{flexDirection: 'row'}}>
-                {/* Left priority color line*/}
-                <View style={{flex:1, }}>
-                  <View style={{ flex: 1,borderWidth: 2, backgroundColor: 'grey', width: '50%'}}>
-                  </View>
-                </View>  
-
-                {/* Middle task & time*/}
-                <View style={{flex:6,marginTop:barHeight, marginBottom: barHeight,}}>
-                  <Text style={{color:'white', fontFamily: 'lexend-bold', marginBottom: barHeight/2}}>
-                    {activity.title}
-                  </Text>              
-
-                  <Text style={{fontFamily: 'lexend-regular', color: '#AFAFAF'}}>
-                    {new Date(`2023-12-31 ${activity.time}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
-                  </Text>
-                </View>             
-            
-                      
-              </View>
-
-            </TouchableHighlight>
-
-
-
-          </View>
-        ))}          
-      </View>
-    )
-  }
 
   return(
     <ScrollView style={{flex:3}}>
@@ -139,11 +93,7 @@ export const RenderCards = ({currentTasks, currentActivity, renderDate}) => {
       }
 
       {
-        currentActivity.length == 0 ? null :  <Activity/>
-      }       
-
-      {
-        currentActivity.length == 0 && currentTasks.length == 0 ? 
+        currentTasks.length == 0 ? 
         (
           <View style={{flex:1}}>
             <NoData/>
