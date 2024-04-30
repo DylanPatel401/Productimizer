@@ -1,15 +1,15 @@
 import { collection, doc, addDoc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp, query, where, getDocs, Query} from 'firebase/firestore';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../firebase/firebase'
+import { useContext, useEffect, useState, useCallback} from 'react';
+
 
 async function getTasks(uid){
   try{
-    console.log(uid)
     const querySnapshot = await getDocs(
         query(collection(FIRESTORE_DB, 'Tasks'), where('owner', '==', uid))
     );
 
     if(querySnapshot.empty) {
-      console.log("empty")
       return [];
     }else{
       const tasks = []
@@ -26,9 +26,9 @@ async function getTasks(uid){
   }
 }
 
+
 export async function getTodaysTasks(uid){
   const tasks = await getTasks(uid);
-  console.log(tasks + " tasks")
   if(!tasks) return [];
 
   const currentTasks = [];
@@ -37,9 +37,9 @@ export async function getTodaysTasks(uid){
   for(let i = 0; i < tasks.length; i++){
     const d = tasks[i].date.split('/');
     const taskDate = new Date(d[0], d[1]-1, d[2], 0,0,0); 
-    console.log(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate())
-    console.log(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate())
-    if(taskDate.getFullYear() == currentDate.getFullYear() && taskDate.getMonth() == currentDate.getMonth() && taskDate.getDate() == currentDate.getDate()){
+    if(taskDate.getFullYear() == currentDate.getFullYear() && taskDate.getMonth() == currentDate.getMonth() && taskDate.getDate() == currentDate.getDate()
+      && tasks[i].completed_at == "" 
+    ){
       currentTasks.push(tasks[i]);
     }
 
@@ -56,8 +56,7 @@ export async function getPastTasks(uid) {
       const { date, time } = taskData[i];
       const d = date.split('/');
       const taskDate = new Date(d[0], d[1] - 1, d[2], ...time.split(':'), 0); 
-      console.log(taskDate);  
-      if (taskDate < currentDate) {
+      if (taskDate < currentDate && taskData[i].completed_at == "") {
         currentTasks.push(taskData[i]);
       }
     }
@@ -68,6 +67,18 @@ export async function getPastTasks(uid) {
     console.error(error);
     throw error;
   }
+}
+
+export async function getComepleted(uid){
+  const tasks = await getTasks(uid);
+  let currentTasks = [];
+  for(let i = 0; i < tasks.length; i++){
+    if(tasks[i].completed_at != ""){
+      currentTasks.push(tasks[i]);
+    }
+  }
+  return currentTasks;
+
 }
 
 export async function createTask ({uid,title,category,date,time,priority}) {
@@ -84,8 +95,9 @@ export async function createTask ({uid,title,category,date,time,priority}) {
   
 
     try{
-        const taskRef = collection(FIRESTORE_DB, 'Tasks');
-        await addDoc(taskRef, newTaskData);
+      const taskRef = collection(FIRESTORE_DB, 'Tasks');
+      await addDoc(taskRef, newTaskData);
+
     }catch(err){
         console.log(err);
         return alert(err);
@@ -97,7 +109,7 @@ export async function deleteTask(taskId) {
   try {
     const taskDocRef = doc(FIRESTORE_DB, 'Tasks', taskId);
     await deleteDoc(taskDocRef);
-    console.log('Task deleted successfully');
+
   } catch (error) {
     console.error('Error deleting task: ', error);
     throw error;
@@ -110,9 +122,11 @@ export async function updateTaskCompletion(taskId) {
     await updateDoc(taskDocRef, {
       completed_at: serverTimestamp()
     });
-    console.log('Task completion time updated successfully');
+    fetchData();
+
   } catch (error) {
     console.error('Error updating task completion time: ', error);
     throw error;
   }
 }
+

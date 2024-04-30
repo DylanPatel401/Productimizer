@@ -47,7 +47,6 @@ const Priority= ({priorityModal, setPriorityModal, handlePrioritySelect}) => {
   const buttonPress = (level) => {
     setPriorityModal(false);
     handlePrioritySelect(level);
-    console.log(priorityModal + " --<");
   }
 
   return(
@@ -119,13 +118,11 @@ const Priority= ({priorityModal, setPriorityModal, handlePrioritySelect}) => {
 
 const Category = ({categoryModal, setCategoryModal, handleCategorySelect}) => {
 
-  const scheme = useContext(ColorContext);
   
 
   const categoryPress = (categoryText) => {
     setCategoryModal(false);
     handleCategorySelect(categoryText);
-    console.log(categoryModal + " < ");
   }
 
   return(
@@ -204,7 +201,6 @@ const DatePickerModal = ({dateModal, setDateModal, handleDateSelect}) => {
   const handleOnPressStartDate = () => {
     setDateModal(false);
     handleDateSelect(selectedStartDate)
-    console.log(selectedStartDate)
   };
 
   return(

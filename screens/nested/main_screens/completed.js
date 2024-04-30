@@ -1,23 +1,20 @@
-import { Text, View } from 'react-native';
-import { useState, useEffect, useContext } from 'react';
 
-import { Todo } from '../../../functions/components/RenderCards';
-import { ColorContext } from '../../../styles/colorContext';
-import { getTasks } from '../../../functions/api/getCompleted';
-import { RenderCards } from '../../../functions/components/RenderCards';
+  import { View, Text} from 'react-native';
+  import { useContext, useEffect, useState, useCallback} from 'react';
+  import { ColorContext } from '../../../styles/colorContext';
+  
+  import { RenderCards } from '../../../functions/components/RenderCards';
+  import { TaskContext } from './TaskContext';
 
-export default function CompletedScreen({navigation}) {
-  const scheme = useContext(ColorContext);
-
-    const currentTasks = getTasks();
-
-    // I don't want to display activities on past due screen.
-    const currentActivity = []
-
+  export default function CompletedScreen({navigation}) {
+    const scheme = useContext(ColorContext);
+    const { completedTasks } = useContext(TaskContext);
+    
     return (
-      <View style={{flex:1, backgroundColor: scheme.background}}>
-        <RenderCards currentTasks={currentTasks} currentActivity={currentActivity} renderDate={true}/>
+      <View style={{flex:1,backgroundColor: scheme.background}}>
+        <RenderCards currentTasks={completedTasks}/>
       </View>
     );
   }
+    
   

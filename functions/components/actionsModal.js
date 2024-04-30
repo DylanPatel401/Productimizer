@@ -5,15 +5,48 @@ import { useNavigation } from '@react-navigation/native';
 
 import { barHeight } from '../../styles/style';
 
-import { deleteTask, updateTaskCompletion } from '../../firebase/tasksActions';
+import { TaskContext } from '../../screens/nested/main_screens/TaskContext';
+import { deleteTask, updateTaskCompletion, getTodaysTasks, getPastTasks, getComepleted} from '../../firebase/tasksActions';
+
+import { FIREBASE_AUTH } from '../../firebase/firebase';
+
 
 const ActionsModal = ({modal, setModal, item_id}) => {
   const navigation = useNavigation();
+  const { todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks } = useContext(TaskContext);
 
-  console.log(item_id)
+  async function fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks){
+
+    try {
+      const uid = FIREBASE_AUTH.currentUser.uid;
+      const todayTasksData = await getTodaysTasks(uid);
+      const pastdueTasksData = await getPastTasks(uid);
+      const completedTasksData = await getComepleted(uid);
+      
+      console.log("----");
+      console.log(todayTasksData);
+      console.log("^^^^^^^");
+
+      setTodayTasks(todayTasksData);
+      setPastdueTasks(pastdueTasksData);
+      setCompletedTasks(completedTasksData);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  }
+
   const markAsDone = async() => {
     await updateTaskCompletion(item_id)
     setModal(false);
+    
+    fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks)
+  }
+
+  const deleteT = async() => {
+    await deleteTask(item_id) 
+    setModal(false);
+    fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks)
+
   }
 
   return(
@@ -76,7 +109,7 @@ const ActionsModal = ({modal, setModal, item_id}) => {
           
           <TouchableOpacity
             style={[styles.modalActionButton, {backgroundColor: '#ab2605'}]}
-            onPress={() => {setModal(false)}}
+            onPress={deleteT}
           >
             <View style={styles.modalActionView}>
               <Text style={styles.modalActionText}>

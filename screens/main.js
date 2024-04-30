@@ -1,5 +1,6 @@
 import { Text, View, Image, SafeAreaView, useWindowDimensions } from 'react-native';
-import { useContext, useState} from 'react';
+import React, { createContext, useState, useContext } from 'react';
+
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 
@@ -36,14 +37,15 @@ export default function MainScreen({navigation}) {
       />
     );
     return (
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: layout.width }}
-        style={{}}
-        renderTabBar={renderTabBar}
-      />
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: layout.width }}
+          style={{}}
+          renderTabBar={renderTabBar}
+        />
+
     );
   }
   

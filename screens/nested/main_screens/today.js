@@ -1,41 +1,20 @@
 import { View, Text} from 'react-native';
-import { useContext, useEffect, useState} from 'react';
+import { useContext, useEffect, useState, useCallback} from 'react';
 import { ColorContext } from '../../../styles/colorContext';
+import { TaskContext } from './TaskContext';
 
 // gets the data, conidtions: date = today
 import { RenderCards } from '../../../functions/components/RenderCards';
-import { getTodaysTasks } from '../../../firebase/tasksActions';
-import { FIREBASE_AUTH } from '../../../firebase/firebase';
 
 export default function TodayScreen({navigation}) {
   const scheme = useContext(ColorContext);
-  const [currentTasks, setCurrentTasks] = useState([]);
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function today(){ 
-      const data = await getTodaysTasks(FIREBASE_AUTH.currentUser.uid);
-      setCurrentTasks(data);      
-    }
-
-    today();
-    setLoading(false);
-  }, [])
+  const { todayTasks } = useContext(TaskContext);
 
   return (
     <View style={{flex:1,backgroundColor: scheme.background}}>
 
-      {loading == true ?
-      (
-        <View style={{flex:1}}>
-          <Text style={{ textAlign: 'center', fontFamily: 'lexend-regular', fontSize:34, color:'white'}}>
-            Loading...
-          </Text>
-        </View>
-      ) : 
-      (
-        <RenderCards currentTasks={currentTasks} renderDate={false}/>
-      )}
+        <RenderCards currentTasks={todayTasks} renderDate={false}/>
+
     </View>
   );
 }

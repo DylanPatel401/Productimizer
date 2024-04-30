@@ -35,25 +35,21 @@ export default function NewTaskScreen({navigation}) {
   const [timeModal, setTimeModal] = useState(false);
   
   const handlePrioritySelect = (priority) => {
-    console.log('Priority press');
     setPriorityText(priority);
     setPriorityModal(false);
   };
 
   const handleCategorySelect = (category) => {
-    console.log('Category press');
     setCategoryText(category);
     setCategoryModal(false);
   };
 
   const handleDateSelect = (date) => {
-    console.log('date press');
     setCurrentDate(date);
     setDateModal(false);
   }
 
   const handleTimeSelect = (time) => {
-    console.log('time press');
     setCurrentTime(time);
     setTimeModal(false);
   }
