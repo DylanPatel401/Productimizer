@@ -5,8 +5,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ActionsModal } from '../functions/components/actionsModal';
 import { ColorContext } from '../styles/colorContext';
 import { barHeight } from '../styles/style'; 
-import { getTasks, getActivity } from '../functions/api/getToday';
 import { RenderCards } from '../functions/components/RenderCards';
+import { getTasksGivenDate } from '../firebase/tasksActions';
+import { FIREBASE_AUTH } from '../firebase/firebase';
 
 export default function CalendarScreen({navigation}) {
   const color = useContext(ColorContext);
@@ -17,15 +18,47 @@ export default function CalendarScreen({navigation}) {
   const [modal, setModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState();
 
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  
+  useEffect(() => {
+    async function getData(){
+      const data = await getTasksGivenDate(FIREBASE_AUTH.currentUser.uid, actualDate)
+     
+      setTasks(data);
+    }
+    getData();
+    setLoading(false);
+  }, [])
+  
+  const fetchNewData = async(index) => {
+    
+    setLoading(true);
+    const data = await getTasksGivenDate(FIREBASE_AUTH.currentUser.uid, addDaysToDate(currentDate, index))
+    
+    setTasks(data);
+    setLoading(false);
+  }
+
+  const newDatePress = async(index) => {
+    setDayIndex(index)
+    setActualDate(addDaysToDate(currentDate, index))
+
+    await fetchNewData(index);
+  }
   const getDayOfWeekStr = (year, month, day) => (new Date(year, month, day).toLocaleDateString('en-US', { weekday: 'short' }));
   
-  const goForward = () => {
+  const goForward = async () => {
     setDate(prevDate => addDaysToDate(prevDate, 7))
     setActualDate(addDaysToDate(currentDate, dayIndex+7))
+    await fetchNewData(dayIndex+7)
   };
-  const goBackward = () => { 
+  const goBackward = async () => { 
     setDate(prevDate => addDaysToDate(prevDate, -7))
     setActualDate(addDaysToDate(currentDate, dayIndex-7))
+    await fetchNewData(dayIndex-7)
+
   };
   
   function addDaysToDate(date, daysToAdd) {
@@ -49,10 +82,7 @@ export default function CalendarScreen({navigation}) {
           <TouchableOpacity 
             style={index != dayIndex ? {backgroundColor:'#272727', flex:1, margin: 5} : {backgroundColor:color.primary, flex:1, margin: 10} } 
             key={index} 
-            onPress={ () => {
-              setDayIndex(index)
-              setActualDate(addDaysToDate(currentDate, index))
-            }}
+            onPress={()=> newDatePress(index)}
           >
             <View style={{alignItems: 'center', margin: 5}}>
               <Text numberOfLines={1} style={{fontFamily: 'lexend-bold',fontSize: barHeight/2, color: ['Sat', 'Sun'].includes(day) ? '#FF4949' : 'white'}}> 
@@ -68,6 +98,8 @@ export default function CalendarScreen({navigation}) {
       
     );
   } 
+
+
  
   return (
     
@@ -105,7 +137,16 @@ export default function CalendarScreen({navigation}) {
         </View>
     
         <View style={{flex:3,}}>
-          <RenderCards currentTasks={getTasks(actualDate)}/>
+          {loading == false ?
+            ( <RenderCards currentTasks={tasks}/> ) :
+            (
+              <View style={{flex:1, justifyContent: 'center'}}>
+                <Text style={{textAlign:'center',color:'white'}}>
+                  loading...
+                </Text>
+              </View>
+            )
+          }
         </View>
 
       

@@ -3,7 +3,7 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from '../firebase/firebase'
 import { useContext, useEffect, useState, useCallback} from 'react';
 
 
-async function getTasks(uid){
+export async function getTasks(uid){
   try{
     const querySnapshot = await getDocs(
         query(collection(FIRESTORE_DB, 'Tasks'), where('owner', '==', uid))
@@ -23,6 +23,38 @@ async function getTasks(uid){
   }catch(error){
     console.log(error);
     return alert(error);
+  }
+}
+
+export async function getTasksGivenDate(uid, date) {
+  try {
+    const month = (date.getMonth() + 1 < 10 ? '0' : '') + (date.getMonth() + 1);
+    const day = (date.getDate() < 10 ? '0' : '') + date.getDate();
+    const formatDate = `${date.getFullYear()}/${month}/${day}`;   
+
+    const querySnapshot = await getDocs(
+      query(collection(FIRESTORE_DB, 'Tasks'), 
+        where('owner', '==', uid),
+        where('date', '==', formatDate)
+      )
+    );
+
+    if (querySnapshot.empty) {
+      return [];
+    } else {
+      const tasks = [];
+      querySnapshot.forEach(doc => {
+        const tempData = doc.data();
+        tempData.taskID = doc.id;
+        tasks.push(tempData);
+      });
+      console.log(tasks);
+      console.log("++^^++");
+      return tasks;
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }
 
