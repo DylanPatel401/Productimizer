@@ -122,7 +122,6 @@ export async function updateTaskCompletion(taskId) {
     await updateDoc(taskDocRef, {
       completed_at: serverTimestamp()
     });
-    fetchData();
 
   } catch (error) {
     console.error('Error updating task completion time: ', error);

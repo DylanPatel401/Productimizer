@@ -10,9 +10,13 @@ import { getFormatedDate } from "react-native-modern-datepicker";
 
 import { createTask } from '../../../firebase/tasksActions';
 import { FIREBASE_AUTH } from '../../../firebase/firebase';
+import { TaskContext } from '../main_screens/TaskContext';
+import { getComepleted, getPastTasks, getTodaysTasks } from '../../../firebase/tasksActions';
 
 export default function NewTaskScreen({navigation}) {
   const scheme = useContext(ColorContext);
+  const { todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks } = useContext(TaskContext);
+
   const logoColor = scheme.primary 
   const logoSize = barHeight*1;
   const [title, changeTitle] = useState();
@@ -57,7 +61,18 @@ export default function NewTaskScreen({navigation}) {
   async function addTask () {
     console.log(`title: ${title} \nDate: ${currentDate} \n Time: ${currentTime} \n Category: ${categoryText}\nPriority: ${priorityText}`);
     await createTask({uid:FIREBASE_AUTH.currentUser.uid, title:title, date:currentDate, time:currentTime, category:categoryText, priority: priorityText})
+
+    const todayData = await getTodaysTasks(FIREBASE_AUTH.currentUser.uid);
+    setTodayTasks(todayData);
+    
+    const pastData = await getPastTasks(FIREBASE_AUTH.currentUser.uid);
+    setPastdueTasks(pastData);   
+
+    const completedData = await getComepleted(FIREBASE_AUTH.currentUser.uid);
+    setCompletedTasks(completedData);
+
   }
+  
   return (
     <View style={{flex:2, backgroundColor: scheme.background}}>
 
