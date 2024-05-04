@@ -26,6 +26,25 @@ export async function getTasks(uid){
   }
 }
 
+export async function getSingleTask(taskID){
+  try {
+    const docSnapshot = await getDoc(doc(FIRESTORE_DB, 'Tasks', taskID));
+
+    if (docSnapshot.exists()) {
+      const taskData = docSnapshot.data();
+      taskData.taskID = docSnapshot.id;
+      return taskData;
+    } else {
+      return null; 
+    }
+  } catch (error) {
+    console.log(error);
+    alert(error);
+    return null; 
+  }
+}
+
+
 export async function getTasksGivenDate(uid, date) {
   try {
     const month = (date.getMonth() + 1 < 10 ? '0' : '') + (date.getMonth() + 1);
@@ -35,7 +54,8 @@ export async function getTasksGivenDate(uid, date) {
     const querySnapshot = await getDocs(
       query(collection(FIRESTORE_DB, 'Tasks'), 
         where('owner', '==', uid),
-        where('date', '==', formatDate)
+        where('date', '==', formatDate),
+        where('completed_at', "==", "")
       )
     );
 
@@ -161,3 +181,19 @@ export async function updateTaskCompletion(taskId) {
   }
 }
 
+export async function updateTask({taskID, task, date, category, priority, time}) {
+  try {
+    const taskDocRef = doc(FIRESTORE_DB, 'Tasks', taskID);
+    await updateDoc(taskDocRef, 
+    {
+      task:task,
+      date:date,
+      time:time,
+      category:category,
+      priority:priority,
+    });
+  } catch (error) {
+    console.error('Error updating task: ', error);
+    throw error;
+  }
+}

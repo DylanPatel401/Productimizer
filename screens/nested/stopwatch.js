@@ -8,13 +8,41 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { activityData, taskData } from '../data';
 import {LinearGradient} from 'expo-linear-gradient';
 import { Audio } from 'expo-av';
+import { updateTaskCompletion } from '../../firebase/tasksActions';
+import { fetchData } from '../../functions/components/actionsModal';
+import { TaskContext } from './main_screens/TaskContext';
+
+
+const images = [
+  require('./../../assets/background/1.png'), 
+  require('./../../assets/background/2.png'),
+  require('./../../assets/background/3.png'),
+  require('./../../assets/background/4.png'),
+  require('./../../assets/background/5.png'),
+  require('./../../assets/background/6.jpg'),
+  require('./../../assets/background/7.jpg'),
+  require('./../../assets/background/8.jpg'),
+];
+
+const getRandomImage = () => {
+  const randomIndex = Math.floor(Math.random() * images.length);
+  return images[randomIndex];
+};
+
+const randomImage = getRandomImage();
 
 export default function StopwatchScreen({ route, navigation }) {
   const colorScheme = useContext(ColorContext);
-  const {item_id} = route.params; 
+  const { todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks } = useContext(TaskContext);
+
+  const {task} = route.params; 
   const [sound, setSound] = useState();
   const [volumeOn, setVolume] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const countRef = useRef(null);
 
+  
   async function playSound() {
     if(volumeOn){
       setVolume(false);
@@ -31,7 +59,12 @@ export default function StopwatchScreen({ route, navigation }) {
 
   }
 
-  
+  const markAsDone = async() => {
+    await updateTaskCompletion(task.taskID);
+    navigation.goBack();
+    fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks);
+  }
+
   useEffect(() => {
     return sound
       ? () => {
@@ -40,35 +73,10 @@ export default function StopwatchScreen({ route, navigation }) {
         }
       : undefined;
   }, [sound]);
+ 
 
-  const findItemById = (itemId) => {
-    const taskItem = taskData.find((item) => item.task_id === itemId);
-    const activityItem = activityData.find((item) => item.activity_id === itemId);
-    return taskItem || activityItem || null;
-  };
-
-  const item = findItemById(item_id);   
-
-  const images = [
-    require('./../../assets/background/1.png'), 
-    require('./../../assets/background/2.png'),
-    require('./../../assets/background/3.png'),
-    require('./../../assets/background/4.png'),
-    require('./../../assets/background/5.png'),
-    require('./../../assets/background/6.jpg'),
-    require('./../../assets/background/7.jpg'),
-    require('./../../assets/background/8.jpg'),
-  ];
-
-  const getRandomImage = () => {
-    const randomIndex = Math.floor(Math.random() * images.length);
-    return images[randomIndex];
-  };
 
   const Stopwatch = () => {
-    const [timer, setTimer] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
-    const countRef = useRef(null);// reference to the interval ID
 
     useEffect(() => {
       const intervalId = setInterval(() => {
@@ -118,10 +126,10 @@ export default function StopwatchScreen({ route, navigation }) {
               </View>
             </TouchableOpacity> 
 
-            <Text style={{fontFamily: 'lexend-bold', fontSize: barHeight, color:'white', textAlign:'center', margin:barHeight}}>
+            <Text style={{ fontFamily: 'lexend-bold', fontSize: barHeight, color: 'white', textAlign: 'center', marginHorizontal: barHeight / 2, width: 80 }}>
               {formatTime(timer)}
             </Text>
-            
+
             <TouchableOpacity
               onPress={isPaused ? handleContinue : handlePause}
               style={{ justifyContent: 'center', alignItems: 'center' }}
@@ -141,20 +149,20 @@ export default function StopwatchScreen({ route, navigation }) {
 
   
 
-      <View style={{flex:2, flexDirection:'row', paddingBottom: barHeight}}>
+      <SafeAreaView style={{flex:2, flexDirection:'row', paddingBottom: barHeight}}>
         <View style={{flex:1}}/>
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={markAsDone}
             style={{flex:2, justifyContent: 'center', alignSelf: 'center'}}
           >
             <View style={{flex:1, justifyContent: 'center', borderWidth: 3, borderColor: colorScheme.primary, borderRadius: barHeight/2}}>
               <Text style={{fontFamily: 'lexend-bold', fontSize: barHeight/1.25, color:'white', textAlign:'center' }}>
-                Done
+                Mark as Done
               </Text>            
             </View>
           </TouchableOpacity>
         <View style={{flex:1}}/>
-      </View>
+      </SafeAreaView>
     </View>
     );
   };  
@@ -162,7 +170,7 @@ export default function StopwatchScreen({ route, navigation }) {
       
   return (  
     <ImageBackground  
-      source={getRandomImage()} // Adjust the path as needed
+      source={randomImage} // Adjust the path as needed
       style={{ flex: 10, resizeMode: 'cover', justifyContent: 'center', }}
     >
       <View style={{ padding: barHeight, flex:1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)', flexDirection:'row'}}>
@@ -183,17 +191,17 @@ export default function StopwatchScreen({ route, navigation }) {
         
         <View style={{flex:4}}>
           <Text style={{ textAlign: 'center', color:'white', fontSize: barHeight, fontFamily: 'lexend-regular'}}>
-            {item.title ? item.title : item.task}  
+            {task.task}
           </Text>          
         </View>
 
         <View style={{flex:1, alignSelf: 'center'}}>
           <TouchableOpacity
-            onPress={() => {playSound()}}
+            onPress={playSound}
           >
             <View style={{alignItems: 'flex-end', marginRight: barHeight/10}}>
               <MaterialCommunityIcons
-                name={'volume-high'}
+                name={volumeOn ? 'volume-variant-off' : 'volume-high'}
                 color={colorScheme.primary}
                 size={barHeight}
               />

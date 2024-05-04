@@ -6,16 +6,11 @@ import { useNavigation } from '@react-navigation/native';
 import { barHeight } from '../../styles/style';
 
 import { TaskContext } from '../../screens/nested/main_screens/TaskContext';
-import { deleteTask, updateTaskCompletion, getTodaysTasks, getPastTasks, getComepleted} from '../../firebase/tasksActions';
+import { deleteTask, updateTaskCompletion, getTodaysTasks, getPastTasks, getComepleted, getSingleTask} from '../../firebase/tasksActions';
 
 import { FIREBASE_AUTH } from '../../firebase/firebase';
 
-
-const ActionsModal = ({modal, setModal, item_id}) => {
-  const navigation = useNavigation();
-  const { todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks } = useContext(TaskContext);
-
-  async function fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks){
+export async function fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks){
 
     try {
       const uid = FIREBASE_AUTH.currentUser.uid;
@@ -23,17 +18,19 @@ const ActionsModal = ({modal, setModal, item_id}) => {
       const pastdueTasksData = await getPastTasks(uid);
       const completedTasksData = await getComepleted(uid);
       
-      console.log("----");
-      console.log(todayTasksData);
-      console.log("^^^^^^^");
-
       setTodayTasks(todayTasksData);
       setPastdueTasks(pastdueTasksData);
       setCompletedTasks(completedTasksData);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
-  }
+}
+
+const ActionsModal = ({modal, setModal, item_id}) => {
+  const navigation = useNavigation();
+  const { todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks } = useContext(TaskContext);
+
+
 
   const markAsDone = async() => {
     await updateTaskCompletion(item_id)
@@ -42,10 +39,29 @@ const ActionsModal = ({modal, setModal, item_id}) => {
     fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks)
   }
 
+  const editT = async () => {
+    const task = await getSingleTask(item_id);
+
+    navigation.push("Edit Task", {
+      editT:task
+    })
+    setModal(false);
+
+  }
+
   const deleteT = async() => {
     await deleteTask(item_id) 
     setModal(false);
     fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks)
+
+  }
+
+  const startT = async() => {
+    const task = await getSingleTask(item_id);
+    setModal(false)
+    navigation.push('Stopwatch', {
+      task: task,
+    })
 
   }
 
@@ -70,7 +86,7 @@ const ActionsModal = ({modal, setModal, item_id}) => {
         <View style={{ flex:1, alignContent:'center'}}>
           <TouchableOpacity
             style={[styles.modalActionButton, {backgroundColor: 'rgba(255,255,255,0.3)'}]}            
-            onPress={() => {setModal(false)}}
+            onPress={editT}
           >
             <View style={styles.modalActionView}>
               <Text style={styles.modalActionText}>
@@ -81,13 +97,7 @@ const ActionsModal = ({modal, setModal, item_id}) => {
 
           <TouchableOpacity
             style={[styles.modalActionButton, {backgroundColor: '#2ca83a'}]}
-            onPress={() => {
-              setModal(false)
-              navigation.push('Stopwatch', {
-                item_id: item_id
-              })
-
-            }}
+            onPress={startT}
           >
             <View style={styles.modalActionView}>
               <Text style={styles.modalActionText}>

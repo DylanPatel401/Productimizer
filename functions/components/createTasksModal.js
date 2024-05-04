@@ -199,6 +199,7 @@ const DatePickerModal = ({dateModal, setDateModal, handleDateSelect}) => {
   }
 
   const handleOnPressStartDate = () => {
+    console.log("close")
     setDateModal(false);
     handleDateSelect(selectedStartDate)
   };
@@ -231,13 +232,20 @@ const DatePickerModal = ({dateModal, setDateModal, handleDateSelect}) => {
                 borderColor: "rgba(122, 146, 165, 0.1)",
               }}
             />
-            <TouchableOpacity style={{backgroundColor:'black', padding: 22}}onPress={handleOnPressStartDate}>
-              <Text style={{ color: "white", fontSize: 22}}>Close</Text>
-            </TouchableOpacity>
+
           </View>
+
         </View>
         
-
+        <View style={{flex:1, margin:50}}>
+            <TouchableOpacity 
+              style={{backgroundColor:'grey', padding: 22}}
+              onPress={handleOnPressStartDate}
+            >
+              <Text style={{ color: "white", fontSize: 22}}> Close </Text>
+            </TouchableOpacity>                      
+        </View>
+      
       <View style={{flex:1}}/>
 
     </View>

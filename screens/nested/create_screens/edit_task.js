@@ -11,26 +11,24 @@ import { getFormatedDate } from "react-native-modern-datepicker";
 import { createTask } from '../../../firebase/tasksActions';
 import { FIREBASE_AUTH } from '../../../firebase/firebase';
 import { TaskContext } from '../main_screens/TaskContext';
-import { getComepleted, getPastTasks, getTodaysTasks } from '../../../firebase/tasksActions';
+import { getComepleted, getPastTasks, getTodaysTasks, updateTask} from '../../../firebase/tasksActions';
 
-export default function NewTaskScreen({navigation}) {
+export default function EditTaskScreen({route,navigation}) {
   const scheme = useContext(ColorContext);
   const { todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks } = useContext(TaskContext);
-
+  const editT = route.params.editT;
   const logoColor = scheme.primary 
   const logoSize = barHeight*1;
-  const [title, changeTitle] = useState();
+  const [title, changeTitle] = useState(editT.task);
 
-  const today = new Date();
-  const startDate = getFormatedDate(
-    today.setDate(today.getDate()),
-    "YYYY/MM/DD"
-  );
+  
+  const startDate = editT.date;
 
-  const [priorityText, setPriorityText] = useState('None');
-  const [categoryText, setCategoryText] = useState('None');
+  console.log(editT)
+  const [priorityText, setPriorityText] = useState(editT.priority);
+  const [categoryText, setCategoryText] = useState(editT.category);
   const [currentDate, setCurrentDate] = useState(startDate);
-  const [currentTime, setCurrentTime] = useState('23:59');
+  const [currentTime, setCurrentTime] = useState(editT.time);
 
 
   const [priorityModal, setPriorityModal] = useState(false); 
@@ -58,12 +56,12 @@ export default function NewTaskScreen({navigation}) {
     setTimeModal(false);
   }
   
-  async function addTask () {
+  async function updateTaskPress () {
     console.log(`title: ${title} \nDate: ${currentDate} \n Time: ${currentTime} \n Category: ${categoryText}\nPriority: ${priorityText}`);
     if(!title) return alert("Please enter a title");
-    await createTask({uid:FIREBASE_AUTH.currentUser.uid, title:title, date:currentDate, time:currentTime, category:categoryText, priority: priorityText})
-    changeTitle("");
 
+    await updateTask({taskID: editT.taskID, task:title, date: currentDate, category: categoryText, priority: priorityText, time: currentTime});
+    navigation.goBack();
     const todayData = await getTodaysTasks(FIREBASE_AUTH.currentUser.uid);
     setTodayTasks(todayData);
     
@@ -73,6 +71,7 @@ export default function NewTaskScreen({navigation}) {
     const completedData = await getComepleted(FIREBASE_AUTH.currentUser.uid);
     setCompletedTasks(completedData);
 
+   
   }
   
   return (
@@ -220,11 +219,11 @@ export default function NewTaskScreen({navigation}) {
           <View style={styles.style}>
             <TouchableHighlight
               style={{flex:1, backgroundColor:scheme.primary}}
-              onPress={addTask}
+              onPress={updateTaskPress}
             >
               <View style={{flex:1, justifyContent: 'center'}}>
                 <Text style={[scheme.text, {textAlign: 'center'}]}>
-                  Add task
+                  Update task
                 </Text>
               </View>              
             </TouchableHighlight>

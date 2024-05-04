@@ -12,7 +12,16 @@
     
     return (
       <View style={{flex:1,backgroundColor: scheme.background}}>
-        <RenderCards currentTasks={completedTasks}/>
+        
+        {completedTasks && completedTasks.length > 0 ?
+        ( <RenderCards currentTasks={completedTasks}/> ) :
+        (
+          <View style={{flex:1, justifyContent: 'center'}}>
+            <Text style={{color:'white', textAlign: 'center', fontFamily: 'lexend-bold', fontSize: 22}}>
+              None
+            </Text>
+          </View>
+        )}
       </View>
     );
   }

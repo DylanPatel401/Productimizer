@@ -10,8 +10,8 @@ import CalendarScreen from './screens/calendar';
 import MainScreen from './screens/main';
 import ProfileScreen from './screens/profile';
 import TaskScreen from './screens/task';
+import EditTaskScreen from './screens/nested/create_screens/edit_task';
 import StopwatchScreen from './screens/nested/stopwatch';
-
 import AuthScreen from './screens_auth/auth';
 
 import { ColorContext } from './styles/colorContext';
@@ -37,8 +37,6 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
-
     async function fetchData(){ 
       const todayData = await getTodaysTasks(FIREBASE_AUTH.currentUser.uid);
       setTodayTasks(todayData);
@@ -63,13 +61,14 @@ export default function App() {
     })    
   }, [])
   
-  const AuthFlow = user ? (
+  const AuthFlow = user && loading == false? (
     <>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Calendar" component={CalendarScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Main" component={MainScreen} options={{unmountOnBlur: true}}/>
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Task" component={TaskScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Edit Task" component={EditTaskScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Stopwatch" component={StopwatchScreen} options={{ headerShown: false }} />    
     </>
 
@@ -83,15 +82,8 @@ export default function App() {
     <NavigationContainer>
       <ColorContext.Provider value={colorScheme}>
         <TaskContext.Provider value={{ todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks}}>
-          {loading == false? (
             <Stack.Navigator>{AuthFlow}</Stack.Navigator>
-          ) : (
-            <View style={{flex:1, justifyContent: 'center'}}>
-              <Text style={{textAlign: 'center'}}> 
-                Loading...
-              </Text>
-            </View>
-          )}
+          
         </TaskContext.Provider>
       </ColorContext.Provider>
     </NavigationContainer>

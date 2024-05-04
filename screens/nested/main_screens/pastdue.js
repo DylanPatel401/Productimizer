@@ -13,8 +13,18 @@ export default function PastdueScreen({navigation}) {
   return (
     <View style={{flex:1,backgroundColor: scheme.background}}>
 
+         
+      {pastdueTasks && pastdueTasks.length > 0 ?
+        ( 
           <RenderCards currentTasks={pastdueTasks}/>
-       
+         ) :
+        (
+          <View style={{flex:1, justifyContent: 'center'}}>
+            <Text style={{color:'white', textAlign: 'center', fontFamily: 'lexend-bold', fontSize: 22}}>
+              None :)
+            </Text>
+          </View>
+        )}
 
     </View>
   );
