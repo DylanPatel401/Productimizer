@@ -5,7 +5,6 @@ import { ColorContext } from '../../styles/colorContext';
 import { useContext } from 'react';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { activityData, taskData } from '../data';
 import {LinearGradient} from 'expo-linear-gradient';
 import { Audio } from 'expo-av';
 import { updateTaskCompletion } from '../../firebase/tasksActions';
@@ -19,9 +18,6 @@ const images = [
   require('./../../assets/background/3.png'),
   require('./../../assets/background/4.png'),
   require('./../../assets/background/5.png'),
-  require('./../../assets/background/6.jpg'),
-  require('./../../assets/background/7.jpg'),
-  require('./../../assets/background/8.jpg'),
 ];
 
 const getRandomImage = () => {

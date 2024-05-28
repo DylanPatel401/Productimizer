@@ -168,7 +168,7 @@ export default function NewTaskScreen({navigation}) {
             </View>
 
             <TouchableOpacity
-              style={{flex:1, borderWidth: 3, borderColor: 'grey', borderRadius: barHeight/2}}
+              style={{flex:1, borderWidth: 3, borderColor: 'grey', borderTopRightRadius: barHeight/2}}
               onPress={() => setCategoryModal(true)}
             >
               <View style={{flex:1, justifyContent: 'center', flexDirection: 'row'}}>
@@ -198,7 +198,7 @@ export default function NewTaskScreen({navigation}) {
             </View>
 
             <TouchableOpacity
-              style={{flex:1, borderWidth: 3, borderColor: 'grey', borderRadius: barHeight/2}}
+              style={{flex:1, borderWidth: 3, borderColor: 'grey', borderTopRightRadius: barHeight/2}}
               onPress={() => setPriorityModal(true)}
             >
               <View style={{flex:1, justifyContent: 'center', flexDirection: 'row'}}>
@@ -238,5 +238,6 @@ export default function NewTaskScreen({navigation}) {
 }
   
 const styles = StyleSheet.create({
-  style: {flex: 1, flexDirection: 'row', margin: barHeight}
+  style: {flex: 1, flexDirection: 'row', margin: barHeight},
+
 })

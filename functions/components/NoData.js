@@ -1,6 +1,5 @@
 import { View, Text, Image, TouchableHighlight, TouchableOpacity,} from 'react-native';
 import { useContext, useState } from 'react';
-import { taskData, activityData } from '../../screens/data';
 import { barHeight } from '../../styles/style';
 import { ColorContext } from '../../styles/colorContext';
 
