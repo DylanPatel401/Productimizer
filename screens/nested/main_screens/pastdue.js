@@ -1,32 +1,15 @@
-import { View, Text} from 'react-native';
-import { useContext, useEffect, useState, useCallback} from 'react';
-import { ColorContext } from '../../../styles/colorContext';
-
-import { RenderCards } from '../../../functions/components/RenderCards';
+import { View } from 'react-native';
+import { useContext } from 'react';
 import { TaskContext } from './TaskContext';
+import { RenderCards } from '../../../functions/components/RenderCards';
+import { colors } from '../../../styles/style';
 
-
-export default function PastdueScreen({navigation}) {
-  const scheme = useContext(ColorContext);
+export default function PastdueScreen() {
   const { pastdueTasks } = useContext(TaskContext);
 
   return (
-    <View style={{flex:1,backgroundColor: scheme.background}}>
-
-         
-      {pastdueTasks && pastdueTasks.length > 0 ?
-        ( 
-          <RenderCards currentTasks={pastdueTasks}/>
-         ) :
-        (
-          <View style={{flex:1, justifyContent: 'center'}}>
-            <Text style={{color:'white', textAlign: 'center', fontFamily: 'lexend-bold', fontSize: 22}}>
-              None :)
-            </Text>
-          </View>
-        )}
-
+    <View style={{ flex: 1, backgroundColor: colors.dark.background }}>
+      <RenderCards currentTasks={pastdueTasks} renderDate={true} />
     </View>
   );
 }
-  

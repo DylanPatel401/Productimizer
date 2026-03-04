@@ -1,106 +1,89 @@
-import { Text, View, TouchableOpacity, StatusBar, Button, TextInput, Image, Modal, StyleSheet} from 'react-native';
-import { useContext, useState, useEffect} from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import {getDatabase,ref,set, onValue,push} from 'firebase/database';
+import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { useState } from 'react';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getDatabase, ref, set } from 'firebase/database';
+import { FIREBASE_AUTH } from "../firebase/firebase";
 
-import { FIREBASE_AUTH} from "../firebase/firebase"
+import ThemedTextInput from '../functions/components/ui/ThemedTextInput';
+import GradientButton from '../functions/components/ui/GradientButton';
+import { colors, spacing, typography } from '../styles/style';
 
-export default function SignUpScreen({navigation}) {
+export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
-  const auth = FIREBASE_AUTH;
-
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
-    // Basic validation
     if (!email || !password || !confirmPassword) {
       return alert('Please fill in all fields');
     }
-
     if (password !== confirmPassword) {
       return alert('Passwords do not match');
     }
+    if (password.length < 6) return alert("Password must be at least 6 characters");
 
-    if(password.length < 6) return alert("Password must be at least 6 characters");
-
-    try{
-      const res = await createUserWithEmailAndPassword(auth, email,password);
-//  {task_id: 301, task: 'CS home', category: 'homework', date: '12/31/2023', time: '17:00',
-// completed_at: null, notification: '1 hour before', level: '#98FB98'}, 
-
+    setLoading(true);
+    try {
+      const res = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
       const db = getDatabase();
       set(ref(db, 'users/' + res.user.uid), {
         username: email.split('@')[0],
-        tasks: [{task_id: 301, task: 'CS home', category: 'homework', date: '12/31/2023', time: '17:00',
-        completed_at: null, notification: '1 hour before', level: '#98FB98'}],
         email: email,
-        color : "DARK"
+        color: "DARK",
       });
-      console.log(res);
-    }catch(error){
-      alert(error)
-      console.log(error);
+    } catch (error) {
+      alert(error.message || error);
+    } finally {
+      setLoading(false);
     }
-   
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1, paddingHorizontal: spacing.xl }}
+    >
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <Text style={[typography.h2, { color: colors.dark.text, marginBottom: spacing.lg }]}>
+          Create account
+        </Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
+        <ThemedTextInput
+          label="Email"
+          icon="email-outline"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="your@email.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
+        <ThemedTextInput
+          label="Password"
+          icon="lock-outline"
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Min 6 characters"
+          secureTextEntry
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm Password"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={(text) => setConfirmPassword(text)}
-      />
+        <ThemedTextInput
+          label="Confirm Password"
+          icon="lock-check-outline"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          placeholder="Retype your password"
+          secureTextEntry
+        />
 
-      <Button title="Sign Up" onPress={handleSignUp} />
-
-      {/* You can add additional UI components, links, or messages here */}
-    </View>
+        <GradientButton
+          title="Create Account"
+          onPress={handleSignUp}
+          loading={loading}
+          style={{ marginTop: spacing.md }}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 20,
-    padding: 10,
-    width: '100%',
-  },
-});
+}

@@ -1,145 +1,100 @@
-import { Text, View, TouchableOpacity, StatusBar, TouchableHighlight, ScrollView, Image, Modal, StyleSheet} from 'react-native';
-import { useContext, useState, useEffect} from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Text, View, TouchableOpacity, Modal } from 'react-native';
+import { useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { barHeight } from '../../styles/style';
-
+import { colors, spacing, typography, borderRadius } from '../../styles/style';
 import { TaskContext } from '../../screens/nested/main_screens/TaskContext';
-import { deleteTask, updateTaskCompletion, getTodaysTasks, getPastTasks, getComepleted, getSingleTask} from '../../firebase/tasksActions';
+import { deleteTask, updateTaskCompletion, getSingleTask } from '../../firebase/tasksActions';
 
-import { FIREBASE_AUTH } from '../../firebase/firebase';
+const ActionButton = ({ icon, iconColor, label, onPress, bgColor }) => (
+  <TouchableOpacity
+    activeOpacity={0.7}
+    onPress={onPress}
+    style={{
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: bgColor || colors.dark.surfaceElevated,
+      borderRadius: borderRadius.md,
+      padding: spacing.md,
+      marginBottom: spacing.sm,
+    }}
+  >
+    <MaterialCommunityIcons name={icon} size={22} color={iconColor || colors.dark.text} style={{ marginRight: spacing.md }} />
+    <Text style={[typography.body, { color: colors.dark.text }]}>{label}</Text>
+  </TouchableOpacity>
+);
 
-export async function fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks){
-
-    try {
-      const uid = FIREBASE_AUTH.currentUser.uid;
-      const todayTasksData = await getTodaysTasks(uid);
-      const pastdueTasksData = await getPastTasks(uid);
-      const completedTasksData = await getComepleted(uid);
-      
-      setTodayTasks(todayTasksData);
-      setPastdueTasks(pastdueTasksData);
-      setCompletedTasks(completedTasksData);
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-    }
-}
-
-const ActionsModal = ({modal, setModal, item_id}) => {
+const ActionsModal = ({ modal, setModal, item_id }) => {
   const navigation = useNavigation();
-  const { todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks } = useContext(TaskContext);
+  const { refreshAllTasks } = useContext(TaskContext);
 
-
-
-  const markAsDone = async() => {
-    await updateTaskCompletion(item_id)
+  const markAsDone = async () => {
+    await updateTaskCompletion(item_id);
     setModal(false);
-    
-    fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks)
-  }
+    await refreshAllTasks();
+  };
 
   const editT = async () => {
     const task = await getSingleTask(item_id);
-
-    navigation.push("Edit Task", {
-      editT:task
-    })
+    navigation.push("Edit Task", { editT: task });
     setModal(false);
+  };
 
-  }
-
-  const deleteT = async() => {
-    await deleteTask(item_id) 
+  const deleteT = async () => {
+    await deleteTask(item_id);
     setModal(false);
-    fetchData(todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks)
+    await refreshAllTasks();
+  };
 
-  }
-
-  const startT = async() => {
+  const startT = async () => {
     const task = await getSingleTask(item_id);
-    setModal(false)
-    navigation.push('Stopwatch', {
-      task: task,
-    })
+    setModal(false);
+    navigation.push('Stopwatch', { task });
+  };
 
-  }
-
-  return(
-    <Modal
-      visible={modal}
-      animationType='slide'
-      transparent={true}
-    >
-    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', }}>
-
-      <View style={{flex:1}}/>
-      <View style={{ flex:1.5, backgroundColor: 'rgba(0,0,0,0.8)', padding: barHeight, borderRadius: barHeight/2, alignSelf:'center'}}>
-
-        <View style={{borderBottomWidth:3, borderColor:'white', margin:barHeight}}>
-          <Text style={{ color: 'white', textAlign: 'center', fontSize: barHeight/1.5, marginBottom: barHeight/1.5, fontFamily: 'lexend-extrabold'}}>
-            Choose an action
-          </Text>            
-        </View>
-
-
-        <View style={{ flex:1, alignContent:'center'}}>
-          <TouchableOpacity
-            style={[styles.modalActionButton, {backgroundColor: 'rgba(255,255,255,0.3)'}]}            
-            onPress={editT}
+  return (
+    <Modal visible={modal} animationType="slide" transparent={true}>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => setModal(false)}
+        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' }}
+      >
+        <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
+          <View
+            style={{
+              backgroundColor: colors.dark.surface,
+              borderTopLeftRadius: borderRadius.xl,
+              borderTopRightRadius: borderRadius.xl,
+              padding: spacing.lg,
+              paddingBottom: spacing.xxl,
+            }}
           >
-            <View style={styles.modalActionView}>
-              <Text style={styles.modalActionText}>
-                Edit 
-              </Text>                
-            </View>
-          </TouchableOpacity>
+            {/* Handle bar */}
+            <View
+              style={{
+                width: 40,
+                height: 4,
+                borderRadius: 2,
+                backgroundColor: colors.dark.textMuted,
+                alignSelf: 'center',
+                marginBottom: spacing.lg,
+              }}
+            />
 
-          <TouchableOpacity
-            style={[styles.modalActionButton, {backgroundColor: '#2ca83a'}]}
-            onPress={startT}
-          >
-            <View style={styles.modalActionView}>
-              <Text style={styles.modalActionText}>
-                Start
-              </Text>                
-            </View>
-          </TouchableOpacity>
-        
-          <TouchableOpacity
-            style={[styles.modalActionButton, {backgroundColor: '#30c7c4'}]}
-            onPress={markAsDone}
-          >
-            <View style={styles.modalActionView}>
-              <Text style={styles.modalActionText}>
-                Mark as done
-              </Text>                
-            </View>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={[styles.modalActionButton, {backgroundColor: '#ab2605'}]}
-            onPress={deleteT}
-          >
-            <View style={styles.modalActionView}>
-              <Text style={styles.modalActionText}>
-                Delete
-              </Text>                
-            </View>
-          </TouchableOpacity>
-        </View>
+            <Text style={[typography.h3, { color: colors.dark.text, marginBottom: spacing.md }]}>
+              Task Actions
+            </Text>
 
-      </View>
-      <View style={{flex:1}}/>
-
-    </View>
-  </Modal>
+            <ActionButton icon="pencil-outline" label="Edit Task" onPress={editT} iconColor={colors.dark.primary} />
+            <ActionButton icon="play-circle-outline" label="Start Timer" onPress={startT} iconColor={colors.dark.tertiary} />
+            <ActionButton icon="check-circle-outline" label="Mark as Done" onPress={markAsDone} iconColor={colors.dark.success} />
+            <ActionButton icon="trash-can-outline" label="Delete" onPress={deleteT} iconColor={colors.dark.error} bgColor={colors.dark.error + '15'} />
+          </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  modalActionView: {  flex: 1, justifyContent:'center', alignContent:'center', borderRadius:4},
-  modalActionText: { textAlign: 'center', color: 'white', fontSize: barHeight/1.5, fontFamily: 'lexend-bold'},
-  modalActionButton: {borderRadius: barHeight/3, flex:1, marginTop:barHeight/2},
-})
-export { ActionsModal}
+export { ActionsModal };

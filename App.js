@@ -1,9 +1,11 @@
-import React, { useState, useEffect, createContext} from 'react'
-import { StatusBar } from 'expo-status-bar';
+import React, { useState, useEffect, useContext } from 'react'
+import { View, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
-import {View,Text} from 'react-native'
+import * as Font from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import * as Notifications from 'expo-notifications';
+import { registerForPushNotifications } from './functions/notifications/notificationService';
 
 import HomeScreen from './screens/home';
 import CalendarScreen from './screens/calendar';
@@ -16,62 +18,56 @@ import AuthScreen from './screens_auth/auth';
 
 import { ColorContext } from './styles/colorContext';
 import { TaskContext } from './screens/nested/main_screens/TaskContext';
+import { TaskProvider } from './screens/nested/main_screens/TaskProvider';
 
 import { lightScheme, darkScheme } from './styles/style';
 import { onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './firebase/firebase';
 
-
+SplashScreen.preventAutoHideAsync();
 
 const Stack = createStackNavigator();
 const currentColorPreference = 'dark'
 const colorScheme = currentColorPreference == 'light' ? lightScheme : darkScheme;
 
-import { getTodaysTasks, getPastTasks, getComepleted} from './firebase/tasksActions';
-
-export default function App() {
+function AppContent() {
   const [user, setUser] = useState(null);
-  const [todayTasks, setTodayTasks] = useState([]);
-  const [pastdueTasks, setPastdueTasks] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData(){ 
-      const todayData = await getTodaysTasks(FIREBASE_AUTH.currentUser.uid);
-      setTodayTasks(todayData);
-      
-      const pastData = await getPastTasks(FIREBASE_AUTH.currentUser.uid);
-      setPastdueTasks(pastData);   
-
-      const completedData = await getComepleted(FIREBASE_AUTH.currentUser.uid);
-      setCompletedTasks(completedData);
-
-      console.log(todayData);
-      setLoading(false);
-    }
-    if(user) fetchData();
-  }, [user])
+  const { refreshAllTasks, loading } = useContext(TaskContext);
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
-      console.log("user");
-
-    })    
+    })
   }, [])
-  
-  const AuthFlow = user && loading == false? (
+
+  useEffect(() => {
+    if (user) {
+      refreshAllTasks();
+      registerForPushNotifications();
+    }
+  }, [user])
+
+  useEffect(() => {
+    const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
+      const data = response.notification.request.content.data;
+      if (data?.taskId) {
+        // Could navigate to task detail here in the future
+        console.log('Notification tapped for task:', data.taskId);
+      }
+    });
+    return () => responseListener.remove();
+  }, [])
+
+  const AuthFlow = user && loading == false ? (
     <>
       <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Calendar" component={CalendarScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Main" component={MainScreen} options={{unmountOnBlur: true}}/>
+      <Stack.Screen name="Main" component={MainScreen} options={{ unmountOnBlur: true }} />
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Task" component={TaskScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Edit Task" component={EditTaskScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Stopwatch" component={StopwatchScreen} options={{ headerShown: false }} />    
+      <Stack.Screen name="Stopwatch" component={StopwatchScreen} options={{ headerShown: false }} />
     </>
-
   ) : (
     <>
       <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
@@ -80,14 +76,36 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <ColorContext.Provider value={colorScheme}>
-        <TaskContext.Provider value={{ todayTasks, setTodayTasks, pastdueTasks, setPastdueTasks, completedTasks, setCompletedTasks}}>
-            <Stack.Navigator>{AuthFlow}</Stack.Navigator>
-          
-        </TaskContext.Provider>
-      </ColorContext.Provider>
+      <Stack.Navigator>{AuthFlow}</Stack.Navigator>
     </NavigationContainer>
   );
-  
 }
 
+export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadFonts() {
+      await Font.loadAsync({
+        'lexend-bold': require('./assets/fonts/static/Lexend-Bold.ttf'),
+        'lexend-extrabold': require('./assets/fonts/static/Lexend-ExtraBold.ttf'),
+        'lexend-regular': require('./assets/fonts/static/Lexend-Regular.ttf'),
+      });
+      setFontsLoaded(true);
+      await SplashScreen.hideAsync();
+    }
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <ColorContext.Provider value={colorScheme}>
+      <TaskProvider>
+        <AppContent />
+      </TaskProvider>
+    </ColorContext.Provider>
+  );
+}
